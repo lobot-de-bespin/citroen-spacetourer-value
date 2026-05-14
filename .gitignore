@@ -6,3 +6,7 @@
 .DS_Store
 
 **/*.quarto_ipynb
+!docs/
+!docs/index.html
+!docs/index_files/
+!docs/index_files/**
