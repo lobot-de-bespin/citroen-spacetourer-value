@@ -1,5 +1,5 @@
 ---
-title: "Citroen ë-SpaceTourer bruktprismodell"
+title: "Citroen ë-SpaceTourer pristapsmodell"
 author: "Lobot"
 date: today
 params:
@@ -39,21 +39,21 @@ selected_model <- comparisons |>
 fit <- fit_candidate_models(model_data)[[selected_model]]
 modelled <- augment_model(fit, model_data)
 metrics <- model_metrics(modelled, fit)
-ranked <- modelled |> filter(relevant) |> arrange(residual)
+ranked <- modelled |> filter(relevant) |> arrange(desc(depreciation_residual))
 readr::write_csv(ranked, "data/processed/spacetourer_ranked_relevant.csv")
 ```
 
 ## Kortversjon
 
-Analysen fant `r nrow(relevant)` relevante Citroen ë-SpaceTourer-annonser på FINN i dag. For å få en mer stabil regresjon er modellen estimert på et bredere Stellantis-søskenmarked med `r nrow(model_data)` elektriske personbil-/flerbruksbilannonser: Citroen ë-SpaceTourer, Opel Zafira-e Life, Peugeot e-Traveller og Toyota Proace Verso Electric.
+Analysen fant `r nrow(relevant)` relevante Citroen ë-SpaceTourer-annonser på FINN i dag. For hver annonse estimeres først nypris fra dagens norske prislistesider/konfiguratorer. Deretter beregnes `pristap = estimert nypris - bruktpris`.
 
-Jeg har brukt en log-prismodell med alder, kilometerstand, batteri og eventuelt bilmodell som kandidatvariabler, valgt etter leave-one-out-feil. Citroen-annonsene rangeres deretter separat på residual.
+Pristapsmodellen estimeres på et bredere Stellantis-søskenmarked med `r nrow(model_data)` elektriske personbil-/flerbruksbilannonser: Citroen ë-SpaceTourer, Opel Zafira-e Life, Peugeot e-Traveller og Toyota Proace Verso Electric. Kandidatmodellene bruker alder, kilometerstand, estimert nypris, batteri og bilmodell, valgt etter leave-one-out-feil.
 
-Negativ residual betyr at annonsert pris er lavere enn modellen forventer. De mest interessante annonsene ligger derfor øverst i residualtabellen.
+Positiv pristapsresidual betyr at bilen har større pristap enn modellen forventer, altså lavere bruktpris enn forventet gitt nypris, alder og km. De mest interessante annonsene ligger derfor øverst i residualtabellen.
 
 ## Modellfakta som styrer variablene
 
-ë-SpaceTourer er en elektrisk flerbruksbil/persontransportør på Stellantis-plattformen. Søskenmodellene Opel Zafira-e Life, Peugeot e-Traveller og Toyota Proace Verso Electric deler i stor grad samme praktiske pakke og batterivalg, og er derfor nyttige observasjoner for bruktprismodellen. Modellnavn tas med som egen kandidatvariabel slik at systematiske prisforskjeller mellom merkene ikke blandes sammen med alder, kilometerstand og batteri.
+ë-SpaceTourer er en elektrisk flerbruksbil/persontransportør på Stellantis-plattformen. Søskenmodellene Opel Zafira-e Life, Peugeot e-Traveller og Toyota Proace Verso Electric deler i stor grad samme praktiske pakke og batterivalg, og er derfor nyttige observasjoner for pristapsmodellen. Modellnavn tas med som egen kandidatvariabel slik at systematiske prisforskjeller mellom merkene ikke blandes sammen med alder, kilometerstand og batteri.
 
 Bilene finnes i flere lengder, blant annet M/L2 og XL/L3, med opptil 8-9 seter. Bruktmarkedet på FINN akkurat nå domineres av XL/L3 og forhjulsdrift. Batteri er en viktig variabel: 50 kWh-bilene har lavere WLTP-rekkevidde enn 75 kWh-bilene, mens nyere 75 kWh-biler typisk prises høyere.
 
@@ -61,6 +61,7 @@ Relevante modellvariabler i dette datagrunnlaget:
 
 - `model_year` / alder: fanger modellår, facelift/nybilnærhet og garanti.
 - `km`: bruktgrad, modellert som `log1p(km)`.
+- `estimated_new_price`: estimert nypris for tilsvarende ny bil/variant.
 - `battery_kwh` / `battery_75`: skiller særlig 50 kWh fra 75 kWh.
 - `vehicle_model`: Citroen, Opel, Peugeot eller Toyota.
 - `seats`: 6, 8 eller 9 seter; beholdes i rapporten, men ikke i hovedmodellen fordi n er for liten.
@@ -68,6 +69,18 @@ Relevante modellvariabler i dette datagrunnlaget:
 - `county`: brukes i markedskartet, ikke som prisvariabel.
 
 ## Datagrunnlag
+
+Nypriskildene:
+
+```{r}
+new_price_sources |>
+  transmute(
+    modell = vehicle_model,
+    kilde = sprintf("<a href='%s'>%s</a>", source_url, source_id),
+    merknad = source_note
+  ) |>
+  kable(escape = FALSE)
+```
 
 Modellgrunnlaget:
 
@@ -80,11 +93,16 @@ market |>
 Citroen-annonsene som rangeres:
 
 ```{r}
-relevant |>
+model_data |>
+  filter(relevant) |>
   transmute(
     FINN = sprintf("<a href='%s'>%s</a>", url, url_id),
     modell = vehicle_model,
     pris = money(price),
+    estimert_nypris = money(estimated_new_price),
+    pristap = money(depreciation),
+    `pristap %` = pct(depreciation_pct),
+    nyprisgrunnlag = msrp_variant,
     modellår = model_year,
     km = comma(km, big.mark = " "),
     batteri = if_else(is.na(battery_kwh), NA_character_, paste0(battery_kwh, " kWh")),
@@ -112,6 +130,16 @@ ggplot(market, aes(km, price, color = county)) +
   scale_y_continuous(labels = money) +
   scale_size_continuous(name = "Batteri kWh", range = c(2.5, 5), breaks = c(50, 75)) +
   labs(x = "Kilometerstand", y = "Pris", color = "Fylke", shape = "Bilmodell") +
+  theme_minimal()
+```
+
+```{r}
+ggplot(model_data, aes(ad_age_years, depreciation, color = vehicle_model)) +
+  geom_point(aes(size = km), alpha = 0.8) +
+  geom_text(data = model_data |> filter(relevant), aes(label = url_id), nudge_y = 16000, size = 3, show.legend = FALSE) +
+  scale_y_continuous(labels = money) +
+  scale_size_continuous(labels = label_number(big.mark = " "), guide = "none") +
+  labs(x = "Alder (år fra modellår)", y = "Pristap", color = "Bilmodell") +
   theme_minimal()
 ```
 
@@ -155,33 +183,33 @@ bind_cols(metrics, comparisons |> filter(model == selected_model)) |>
 ## Diagnostikk
 
 ```{r}
-ggplot(modelled, aes(predicted, price)) +
+ggplot(modelled, aes(predicted_price, price)) +
   geom_point(aes(color = county, shape = vehicle_model), size = 3, alpha = 0.85) +
   geom_abline(slope = 1, intercept = 0, linetype = "dashed", color = "#D55E00") +
   geom_text(aes(label = url_id), nudge_y = 12000, size = 3, show.legend = FALSE) +
   scale_x_continuous(labels = money) +
   scale_y_continuous(labels = money) +
-  labs(x = "Modellert pris", y = "Annonsert pris", color = "Fylke", shape = "Bilmodell") +
+  labs(x = "Modellert bruktpris", y = "Annonsert pris", color = "Fylke", shape = "Bilmodell") +
   theme_minimal()
 ```
 
 ```{r}
-ggplot(modelled, aes(predicted, residual)) +
+ggplot(modelled, aes(predicted_depreciation, depreciation_residual)) +
   geom_hline(yintercept = 0, linetype = "dashed", color = "#D55E00") +
   geom_point(aes(color = county, shape = vehicle_model), size = 3, alpha = 0.85) +
   geom_text(aes(label = url_id), nudge_y = 12000, size = 3, show.legend = FALSE) +
   scale_x_continuous(labels = money) +
   scale_y_continuous(labels = money) +
-  labs(x = "Modellert pris", y = "Residual: annonsert minus modellert", color = "Fylke", shape = "Bilmodell") +
+  labs(x = "Modellert pristap", y = "Pristapsresidual: faktisk minus modellert", color = "Fylke", shape = "Bilmodell") +
   theme_minimal()
 ```
 
 ```{r}
-ggplot(modelled, aes(sample = residual)) +
+ggplot(modelled, aes(sample = depreciation_residual)) +
   stat_qq(alpha = 0.75) +
   stat_qq_line(color = "#D55E00") +
   scale_y_continuous(labels = money) +
-  labs(x = "Teoretiske kvantiler", y = "Residual") +
+  labs(x = "Teoretiske kvantiler", y = "Pristapsresidual") +
   theme_minimal()
 ```
 
@@ -192,8 +220,10 @@ modelled |>
     FINN = sprintf("<a href='%s'>%s</a>", url, url_id),
     modell = vehicle_model,
     pris = money(price),
-    predikert = money(predicted),
-    residual = money(residual),
+    nypris = money(estimated_new_price),
+    pristap = money(depreciation),
+    predikert_pristap = money(predicted_depreciation),
+    pristapsresidual = money(depreciation_residual),
     `student-residual` = round(student_residual, 2),
     `Cook's D` = round(cooks_d, 3),
     leverage = round(leverage, 3)
@@ -211,9 +241,12 @@ ranked |>
     annonse = coalesce(subtitle, description, title),
     modell = vehicle_model,
     pris = money(price),
-    predikert = money(predicted),
-    residual = money(residual),
-    `relativ residual` = pct(pct_residual),
+    nypris = money(estimated_new_price),
+    pristap = money(depreciation),
+    predikert_pristap = money(predicted_depreciation),
+    pristapsresidual = money(depreciation_residual),
+    `relativ residual` = pct(depreciation_residual_pct),
+    nyprisgrunnlag = msrp_variant,
     modellår = model_year,
     km = comma(km, big.mark = " "),
     batteri = paste0(battery_kwh_model, " kWh"),
@@ -236,9 +269,12 @@ if (nrow(focus) == 0) {
       annonse = coalesce(subtitle, description, title),
       modell = vehicle_model,
       pris = money(price),
-      predikert = money(predicted),
-      residual = money(residual),
-      `relativ residual` = pct(pct_residual),
+      nypris = money(estimated_new_price),
+      pristap = money(depreciation),
+      predikert_pristap = money(predicted_depreciation),
+      pristapsresidual = money(depreciation_residual),
+      `relativ residual` = pct(depreciation_residual_pct),
+      nyprisgrunnlag = msrp_assumption,
       modellår = model_year,
       km = comma(km, big.mark = " "),
       batteri = paste0(battery_kwh_model, " kWh"),
@@ -251,4 +287,4 @@ if (nrow(focus) == 0) {
 
 ## Begrensninger
 
-Dette er fortsatt et lite datasett med høy leverage i enkeltobservasjoner. Ingen spline er brukt, fordi observasjonstallet fortsatt er for lavt til at en kurve for kilometerstand eller alder blir troverdig. Neste modellversjon bør teste lengdevariant og seter når parseren får nok variasjon og komplette felt.
+Dette er fortsatt et lite datasett med høy leverage i enkeltobservasjoner. Nypris er en estimert gjenkjøpspris for tilsvarende ny variant i 2026, ikke historisk faktisk kjøpspris for hvert eksemplar. Det gjør modellen mer økonomisk men introduserer antakelser om trim, lengde, seter og utstyr. Ingen spline er brukt, fordi observasjonstallet fortsatt er for lavt til at en kurve for kilometerstand eller alder blir troverdig.

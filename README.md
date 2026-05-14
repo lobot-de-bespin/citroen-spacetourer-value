@@ -1,12 +1,14 @@
-# Citroen ë-SpaceTourer FINN value model
+# Citroen ë-SpaceTourer FINN depreciation model
 
 Quarto/R analysis of Citroen ë-SpaceTourer listings on FINN.no.
 
 The scrape on 2026-05-14 found 6 relevant Citroen electric SpaceTourer
-listings, including FINN code `441656103`. The regression is estimated on the
-broader Stellantis sibling market: Citroen ë-SpaceTourer, Opel Zafira-e Life,
-Peugeot e-Traveller, and Toyota Proace Verso Electric. Citroen listings are then
-ranked separately by residual.
+listings, including FINN code `441656103`. The report estimates current new-car
+price for each listing from Norwegian 2026 price lists/configurators, computes
+`depreciation = estimated_new_price - used_price`, then models depreciation on
+the broader Stellantis sibling market: Citroen ë-SpaceTourer, Opel Zafira-e
+Life, Peugeot e-Traveller, and Toyota Proace Verso Electric. Citroen listings
+are ranked separately by depreciation residual.
 
 ## Run
 
@@ -25,6 +27,7 @@ Outputs:
 - `data/processed/stellantis_sibling_market.csv`
 - `data/processed/spacetourer_relevant.csv`
 - `data/processed/spacetourer_ranked_relevant.csv`
+- `data/raw/new_price_sources/`
 - `docs/index.html`
 
 ## Focus ad

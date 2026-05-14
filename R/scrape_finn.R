@@ -156,19 +156,6 @@ parse_text_flags <- function(txt, subtitle) {
   tibble(
     battery_kwh_detected = parse_number(str_match(all_txt, regex("\\b(50|75)\\s*kW[ht]\\b", ignore_case = TRUE))[, 2]),
     range_wltp_km_detected = parse_number(str_match(all_txt, regex("\\b([0-9]{3})\\s*km\\b", ignore_case = TRUE))[, 2]),
-    length_variant = case_when(
-      str_detect(all_txt, regex("\\bL3\\b|\\bXL\\b|extra long|ekstra lang", ignore_case = TRUE)) ~ "XL/L3",
-      str_detect(all_txt, regex("\\bL2\\b|\\bM\\b|medium|standard", ignore_case = TRUE)) ~ "M/L2",
-      str_detect(all_txt, regex("\\bL1\\b|\\bXS\\b|kort", ignore_case = TRUE)) ~ "XS/L1",
-      TRUE ~ NA_character_
-    ),
-    trim = case_when(
-      str_detect(all_txt, regex("\\bPlus\\b", ignore_case = TRUE)) ~ "Plus",
-      str_detect(all_txt, regex("\\bShine\\b", ignore_case = TRUE)) ~ "Shine",
-      str_detect(all_txt, regex("\\bBusiness\\b", ignore_case = TRUE)) ~ "Business",
-      str_detect(all_txt, regex("\\bFeel\\b", ignore_case = TRUE)) ~ "Feel",
-      TRUE ~ NA_character_
-    ),
     has_towbar = extract_flag(all_txt, "hengerfeste|h\\.feste|tilhengerfeste|krok"),
     has_panorama = extract_flag(all_txt, "panorama"),
     has_hud = extract_flag(all_txt, "head.?up|\\bhud\\b"),
@@ -209,9 +196,37 @@ classify_vehicle_model <- function(brand, model, title, ad_title, subtitle, desc
       str_detect(txt, "e.?traveller|75\\s?kwh|50\\s?kwh|75kwt|50kwt|\\bel\\b|electric|elektrisk") ~ "Peugeot e-Traveller",
     str_detect(txt, "toyota") &
       str_detect(txt, "proace") &
+      !str_detect(txt, "proace city") &
       str_detect(txt, "verso") &
       str_detect(txt, "75\\s?kwh|50\\s?kwh|75kwt|50kwt|\\bel\\b|electric|elektrisk") ~ "Toyota Proace Verso Electric",
     TRUE ~ NA_character_
+  )
+}
+
+infer_length_variant <- function(vehicle_model, title, ad_title, subtitle, description) {
+  txt <- str_to_lower(str_squish(paste(title, ad_title, subtitle, description)))
+  case_when(
+    str_detect(txt, regex("\\bL3\\b|\\bXL\\b|\\bLang\\b|\\bLong\\b", ignore_case = TRUE)) ~ "XL/L3",
+    str_detect(txt, regex("\\bL2\\b|\\bM\\b|\\bMedium\\b", ignore_case = TRUE)) ~ "M/L2",
+    str_detect(txt, regex("\\bL1\\b|\\bXS\\b|\\bKort\\b", ignore_case = TRUE)) ~ "XS/L1",
+    vehicle_model == "Toyota Proace Verso Electric" & str_detect(txt, regex("\\bFamily\\b|\\bShuttle\\b", ignore_case = TRUE)) ~ "M/L2",
+    TRUE ~ NA_character_
+  )
+}
+
+infer_trim_family <- function(vehicle_model, title, ad_title, subtitle, description, has_leather, has_panorama, has_camera) {
+  txt <- str_to_lower(str_squish(paste(title, ad_title, subtitle, description)))
+  case_when(
+    vehicle_model == "Citroen ë-SpaceTourer" &
+      str_detect(txt, regex("\\bMAX\\b|\\bShine\\b|skinn|panorama|massasje", ignore_case = TRUE)) ~ "high",
+    vehicle_model == "Opel Zafira-e Life" &
+      str_detect(txt, regex("\\bGS\\b|\\bElegance\\b|skinn|panorama|massasje", ignore_case = TRUE)) ~ "high",
+    vehicle_model == "Toyota Proace Verso Electric" &
+      str_detect(txt, regex("\\bFamily\\b|\\bExecutive Family\\b|skinn|panorama", ignore_case = TRUE)) ~ "high",
+    vehicle_model == "Peugeot e-Traveller" &
+      str_detect(txt, regex("\\bAllure\\b|skinn|panorama|massasje|el\\.skyved|glasstak", ignore_case = TRUE)) ~ "high",
+    has_leather | has_panorama | has_camera ~ "high",
+    TRUE ~ "base"
   )
 }
 
@@ -298,6 +313,8 @@ listings <- search |>
     price = coalesce(total_price, search_price),
     model_clean = coalesce(model, ad_title),
     vehicle_model = classify_vehicle_model(brand, model_clean, title, ad_title, subtitle, description),
+    length_variant = infer_length_variant(vehicle_model, title, ad_title, subtitle, description),
+    trim_family = infer_trim_family(vehicle_model, title, ad_title, subtitle, description, has_leather, has_panorama, has_camera),
     is_electric = str_to_lower(fuel) %in% c("el", "elektrisitet") |
       str_detect(str_to_lower(paste(title, description, subtitle)), "75\\s?kwh|50\\s?kwh|75kwt|50kwt|e-space|ë-space|e-life|e-traveller|electric|elektrisk|\\bel\\b"),
     model_sample = !is.na(vehicle_model) & is_electric & seats >= 5,
@@ -306,7 +323,7 @@ listings <- search |>
     parse_source_flags = "deterministic keyword parser"
   ) |>
   select(url_id, title, ad_title, subtitle, description, price, model_year, km, seats,
-         vehicle_model, length_variant, trim, fuel, drive, battery_kwh, range_wltp_km, effect_hp,
+         vehicle_model, length_variant, trim_family, fuel, drive, battery_kwh, range_wltp_km, effect_hp,
          max_tow_kg, body_type, vehicle_class, has_towbar, has_panorama, has_hud,
          has_leather, has_camera, has_nav, is_camper, owners, first_registered,
          warranty_text, warranty_months, warranty_km, color, place, postal_code, county,
