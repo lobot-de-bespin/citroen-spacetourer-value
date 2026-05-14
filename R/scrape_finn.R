@@ -20,7 +20,16 @@ search_terms <- c(
   "ë-SpaceTourer",
   "75kWt SpaceTourer",
   "50kWh SpaceTourer",
-  "SpaceTourer 75kWt"
+  "SpaceTourer 75kWt",
+  "Opel Zafira e-Life",
+  "Opel Zafira-e Life",
+  "Zafira e-Life 75kWh",
+  "Peugeot e-Traveller",
+  "Peugeot Traveller elektrisk",
+  "Peugeot Traveller 75kWh",
+  "Toyota Proace Verso Electric",
+  "Toyota Proace Verso elektrisk",
+  "Toyota Proace Verso 75kWh"
 )
 
 search_url <- function(query, page) {
@@ -186,6 +195,26 @@ extract_targeting_value <- function(txt, key) {
   extract_first(txt, pattern)
 }
 
+classify_vehicle_model <- function(brand, model, title, ad_title, subtitle, description) {
+  txt <- str_to_lower(str_squish(paste(brand, model, title, ad_title, subtitle, description)))
+  case_when(
+    str_detect(txt, "citroen|citro.n") &
+      str_detect(txt, "space.?tourer") &
+      !str_detect(txt, "grand c4|\\bc4\\b|jumpy") ~ "Citroen ë-SpaceTourer",
+    str_detect(txt, "opel") &
+      str_detect(txt, "zafira") &
+      str_detect(txt, "e.?life|75\\s?kwh|50\\s?kwh|75kwt|50kwt|\\bel\\b|electric") ~ "Opel Zafira-e Life",
+    str_detect(txt, "peugeot") &
+      str_detect(txt, "traveller") &
+      str_detect(txt, "e.?traveller|75\\s?kwh|50\\s?kwh|75kwt|50kwt|\\bel\\b|electric|elektrisk") ~ "Peugeot e-Traveller",
+    str_detect(txt, "toyota") &
+      str_detect(txt, "proace") &
+      str_detect(txt, "verso") &
+      str_detect(txt, "75\\s?kwh|50\\s?kwh|75kwt|50kwt|\\bel\\b|electric|elektrisk") ~ "Toyota Proace Verso Electric",
+    TRUE ~ NA_character_
+  )
+}
+
 county_from_postal_code <- function(postal_code) {
   pc <- suppressWarnings(as.integer(postal_code))
   case_when(
@@ -268,24 +297,28 @@ listings <- search |>
   mutate(
     price = coalesce(total_price, search_price),
     model_clean = coalesce(model, ad_title),
-    is_citroen = str_to_lower(brand) == "citroen",
-    is_spacetourer = str_detect(str_to_lower(paste(model_clean, ad_title, subtitle)), "space.?tourer") &
-      !str_detect(str_to_lower(paste(model_clean, ad_title)), "grand c4|\\bc4\\b|jumpy"),
+    vehicle_model = classify_vehicle_model(brand, model_clean, title, ad_title, subtitle, description),
     is_electric = str_to_lower(fuel) %in% c("el", "elektrisitet") |
-      str_detect(str_to_lower(paste(title, description, subtitle)), "75\\s?kwh|50\\s?kwh|75kwt|50kwt|e-space|ë-space|\\bel\\b"),
-    relevant = is_citroen & is_spacetourer & is_electric,
+      str_detect(str_to_lower(paste(title, description, subtitle)), "75\\s?kwh|50\\s?kwh|75kwt|50kwt|e-space|ë-space|e-life|e-traveller|electric|elektrisk|\\bel\\b"),
+    model_sample = !is.na(vehicle_model) & is_electric & seats >= 5,
+    relevant = vehicle_model == "Citroen ë-SpaceTourer" & is_electric,
     parse_source_core = "FINN HTML definition list + SEO structured data",
     parse_source_flags = "deterministic keyword parser"
   ) |>
   select(url_id, title, ad_title, subtitle, description, price, model_year, km, seats,
-         length_variant, trim, fuel, drive, battery_kwh, range_wltp_km, effect_hp,
+         vehicle_model, length_variant, trim, fuel, drive, battery_kwh, range_wltp_km, effect_hp,
          max_tow_kg, body_type, vehicle_class, has_towbar, has_panorama, has_hud,
          has_leather, has_camera, has_nav, is_camper, owners, first_registered,
          warranty_text, warranty_months, warranty_km, color, place, postal_code, county,
-         latitude, longitude, seller_name, updated_at_text, relevant, is_citroen,
-         is_spacetourer, is_electric, parse_source_core, parse_source_flags,
+         latitude, longitude, seller_name, updated_at_text, model_sample, relevant,
+         is_electric, parse_source_core, parse_source_flags,
          raw_html_file, url, everything())
 
 write_csv(listings, "data/processed/spacetourer_listings.csv")
+write_csv(filter(listings, model_sample), "data/processed/stellantis_sibling_market.csv")
 write_csv(filter(listings, relevant), "data/processed/spacetourer_relevant.csv")
-message("Wrote ", nrow(listings), " candidate listings; ", sum(listings$relevant, na.rm = TRUE), " relevant Citroen e-SpaceTourer listings.")
+message(
+  "Wrote ", nrow(listings), " candidate listings; ",
+  sum(listings$model_sample, na.rm = TRUE), " Stellantis sibling listings; ",
+  sum(listings$relevant, na.rm = TRUE), " relevant Citroen e-SpaceTourer listings."
+)

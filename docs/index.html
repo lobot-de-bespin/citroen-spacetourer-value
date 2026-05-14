@@ -150,72 +150,117 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <summary>Code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>listings <span class="ot">&lt;-</span> readr<span class="sc">::</span><span class="fu">read_csv</span>(<span class="st">"data/processed/spacetourer_listings.csv"</span>, <span class="at">show_col_types =</span> <span class="cn">FALSE</span>)</span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>relevant <span class="ot">&lt;-</span> listings <span class="sc">|&gt;</span> <span class="fu">filter</span>(relevant)</span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>model_data <span class="ot">&lt;-</span> <span class="fu">prepare_model_data</span>(listings)</span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>comparisons <span class="ot">&lt;-</span> <span class="fu">compare_models</span>(model_data)</span>
-<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>selected_model <span class="ot">&lt;-</span> comparisons <span class="sc">|&gt;</span></span>
-<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(loocv_mae, glance_AIC) <span class="sc">|&gt;</span></span>
-<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">slice</span>(<span class="dv">1</span>) <span class="sc">|&gt;</span></span>
-<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pull</span>(model)</span>
-<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>fit <span class="ot">&lt;-</span> <span class="fu">fit_candidate_models</span>(model_data)[[selected_model]]</span>
-<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>modelled <span class="ot">&lt;-</span> <span class="fu">augment_model</span>(fit, model_data)</span>
-<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>metrics <span class="ot">&lt;-</span> <span class="fu">model_metrics</span>(modelled, fit)</span>
-<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>ranked <span class="ot">&lt;-</span> modelled <span class="sc">|&gt;</span> <span class="fu">filter</span>(relevant) <span class="sc">|&gt;</span> <span class="fu">arrange</span>(residual)</span>
-<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>readr<span class="sc">::</span><span class="fu">write_csv</span>(ranked, <span class="st">"data/processed/spacetourer_ranked_relevant.csv"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>market <span class="ot">&lt;-</span> listings <span class="sc">|&gt;</span> <span class="fu">filter</span>(model_sample)</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>model_data <span class="ot">&lt;-</span> <span class="fu">prepare_model_data</span>(listings)</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>comparisons <span class="ot">&lt;-</span> <span class="fu">compare_models</span>(model_data)</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>selected_model <span class="ot">&lt;-</span> comparisons <span class="sc">|&gt;</span></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(loocv_mae, glance_AIC) <span class="sc">|&gt;</span></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">slice</span>(<span class="dv">1</span>) <span class="sc">|&gt;</span></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pull</span>(model)</span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>fit <span class="ot">&lt;-</span> <span class="fu">fit_candidate_models</span>(model_data)[[selected_model]]</span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>modelled <span class="ot">&lt;-</span> <span class="fu">augment_model</span>(fit, model_data)</span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>metrics <span class="ot">&lt;-</span> <span class="fu">model_metrics</span>(modelled, fit)</span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>ranked <span class="ot">&lt;-</span> modelled <span class="sc">|&gt;</span> <span class="fu">filter</span>(relevant) <span class="sc">|&gt;</span> <span class="fu">arrange</span>(residual)</span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>readr<span class="sc">::</span><span class="fu">write_csv</span>(ranked, <span class="st">"data/processed/spacetourer_ranked_relevant.csv"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 </div>
 <section id="kortversjon" class="level2">
 <h2 class="anchored" data-anchor-id="kortversjon">Kortversjon</h2>
-<p>Markedet er tynt: analysen fant 6 relevante Citroen ë-SpaceTourer-annonser på FINN i dag. Derfor er modellen først og fremst et screeningverktøy, ikke en presis verdsettelsesmotor. Jeg har brukt en enkel log-prismodell med alder, kilometerstand og eventuelt 75 kWh-batteri, valgt etter leave-one-out-feil.</p>
+<p>Analysen fant 6 relevante Citroen ë-SpaceTourer-annonser på FINN i dag. For å få en mer stabil regresjon er modellen estimert på et bredere Stellantis-søskenmarked med 33 elektriske personbil-/flerbruksbilannonser: Citroen ë-SpaceTourer, Opel Zafira-e Life, Peugeot e-Traveller og Toyota Proace Verso Electric.</p>
+<p>Jeg har brukt en log-prismodell med alder, kilometerstand, batteri og eventuelt bilmodell som kandidatvariabler, valgt etter leave-one-out-feil. Citroen-annonsene rangeres deretter separat på residual.</p>
 <p>Negativ residual betyr at annonsert pris er lavere enn modellen forventer. De mest interessante annonsene ligger derfor øverst i residualtabellen.</p>
 </section>
 <section id="modellfakta-som-styrer-variablene" class="level2">
 <h2 class="anchored" data-anchor-id="modellfakta-som-styrer-variablene">Modellfakta som styrer variablene</h2>
-<p>ë-SpaceTourer er en elektrisk flerbruksbil/persontransportør på Stellantis-plattformen. Den finnes i flere lengder, blant annet M/L2 og XL/L3, med opptil 8-9 seter. Bruktmarkedet på FINN akkurat nå domineres av XL/L3 og forhjulsdrift. Batteri er en viktig variabel: 50 kWh-bilene har lavere WLTP-rekkevidde enn 75 kWh-bilene, mens nyere 75 kWh-biler typisk prises høyere.</p>
+<p>ë-SpaceTourer er en elektrisk flerbruksbil/persontransportør på Stellantis-plattformen. Søskenmodellene Opel Zafira-e Life, Peugeot e-Traveller og Toyota Proace Verso Electric deler i stor grad samme praktiske pakke og batterivalg, og er derfor nyttige observasjoner for bruktprismodellen. Modellnavn tas med som egen kandidatvariabel slik at systematiske prisforskjeller mellom merkene ikke blandes sammen med alder, kilometerstand og batteri.</p>
+<p>Bilene finnes i flere lengder, blant annet M/L2 og XL/L3, med opptil 8-9 seter. Bruktmarkedet på FINN akkurat nå domineres av XL/L3 og forhjulsdrift. Batteri er en viktig variabel: 50 kWh-bilene har lavere WLTP-rekkevidde enn 75 kWh-bilene, mens nyere 75 kWh-biler typisk prises høyere.</p>
 <p>Relevante modellvariabler i dette datagrunnlaget:</p>
 <ul>
 <li><code>model_year</code> / alder: fanger modellår, facelift/nybilnærhet og garanti.</li>
 <li><code>km</code>: bruktgrad, modellert som <code>log1p(km)</code>.</li>
 <li><code>battery_kwh</code> / <code>battery_75</code>: skiller særlig 50 kWh fra 75 kWh.</li>
+<li><code>vehicle_model</code>: Citroen, Opel, Peugeot eller Toyota.</li>
 <li><code>seats</code>: 6, 8 eller 9 seter; beholdes i rapporten, men ikke i hovedmodellen fordi n er for liten.</li>
-<li><code>length_variant</code>: M/L2 vs XL/L3; alle relevante biler her er parsable som XL/L3, så variabelen kan ikke forklare prisforskjeller i dagens datasett.</li>
+<li><code>length_variant</code>: M/L2 vs XL/L3; beholdes i rapporten, men brukes ikke i hovedmodellen før den er mer komplett og variert.</li>
 <li><code>county</code>: brukes i markedskartet, ikke som prisvariabel.</li>
 </ul>
 </section>
 <section id="datagrunnlag" class="level2">
 <h2 class="anchored" data-anchor-id="datagrunnlag">Datagrunnlag</h2>
+<p>Modellgrunnlaget:</p>
 <div class="cell">
 <details class="code-fold">
 <summary>Code</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>relevant <span class="sc">|&gt;</span></span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">transmute</span>(</span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">FINN =</span> <span class="fu">sprintf</span>(<span class="st">"&lt;a href='%s'&gt;%s&lt;/a&gt;"</span>, url, url_id),</span>
-<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">pris =</span> <span class="fu">money</span>(price),</span>
-<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>    modellår <span class="ot">=</span> model_year,</span>
-<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">km =</span> <span class="fu">comma</span>(km, <span class="at">big.mark =</span> <span class="st">" "</span>),</span>
-<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">batteri =</span> <span class="fu">if_else</span>(<span class="fu">is.na</span>(battery_kwh), <span class="cn">NA_character_</span>, <span class="fu">paste0</span>(battery_kwh, <span class="st">" kWh"</span>)),</span>
-<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">WLTP =</span> <span class="fu">if_else</span>(<span class="fu">is.na</span>(range_wltp_km), <span class="cn">NA_character_</span>, <span class="fu">paste0</span>(range_wltp_km, <span class="st">" km"</span>)),</span>
-<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">seter =</span> seats,</span>
-<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">lengde =</span> length_variant,</span>
-<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>    <span class="at">fylke =</span> county</span>
-<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span></span>
-<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">kable</span>(<span class="at">escape =</span> <span class="cn">FALSE</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>market <span class="sc">|&gt;</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">count</span>(vehicle_model, <span class="at">sort =</span> <span class="cn">TRUE</span>) <span class="sc">|&gt;</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">kable</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<thead>
+<tr class="header">
+<th style="text-align: left;">vehicle_model</th>
+<th style="text-align: right;">n</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Peugeot e-Traveller</td>
+<td style="text-align: right;">10</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Toyota Proace Verso Electric</td>
+<td style="text-align: right;">9</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Opel Zafira-e Life</td>
+<td style="text-align: right;">8</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Citroen ë-SpaceTourer</td>
+<td style="text-align: right;">6</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>Citroen-annonsene som rangeres:</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>relevant <span class="sc">|&gt;</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">transmute</span>(</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">FINN =</span> <span class="fu">sprintf</span>(<span class="st">"&lt;a href='%s'&gt;%s&lt;/a&gt;"</span>, url, url_id),</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">modell =</span> vehicle_model,</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">pris =</span> <span class="fu">money</span>(price),</span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>    modellår <span class="ot">=</span> model_year,</span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">km =</span> <span class="fu">comma</span>(km, <span class="at">big.mark =</span> <span class="st">" "</span>),</span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">batteri =</span> <span class="fu">if_else</span>(<span class="fu">is.na</span>(battery_kwh), <span class="cn">NA_character_</span>, <span class="fu">paste0</span>(battery_kwh, <span class="st">" kWh"</span>)),</span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">WLTP =</span> <span class="fu">if_else</span>(<span class="fu">is.na</span>(range_wltp_km), <span class="cn">NA_character_</span>, <span class="fu">paste0</span>(range_wltp_km, <span class="st">" km"</span>)),</span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">seter =</span> seats,</span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>    <span class="at">lengde =</span> length_variant,</span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>    <span class="at">fylke =</span> county</span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span></span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">kable</span>(<span class="at">escape =</span> <span class="cn">FALSE</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 <div class="cell-output-display">
 <table class="caption-top table table-sm table-striped small">
 <colgroup>
-<col style="width: 51%">
-<col style="width: 8%">
-<col style="width: 6%">
-<col style="width: 5%">
-<col style="width: 6%">
+<col style="width: 44%">
+<col style="width: 14%">
+<col style="width: 7%">
 <col style="width: 5%">
 <col style="width: 4%">
 <col style="width: 5%">
-<col style="width: 6%">
+<col style="width: 4%">
+<col style="width: 3%">
+<col style="width: 4%">
+<col style="width: 5%">
 </colgroup>
 <thead>
 <tr class="header">
 <th style="text-align: left;">FINN</th>
+<th style="text-align: left;">modell</th>
 <th style="text-align: left;">pris</th>
 <th style="text-align: right;">modellår</th>
 <th style="text-align: left;">km</th>
@@ -229,6 +274,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <tbody>
 <tr class="odd">
 <td style="text-align: left;"><a href="https://www.finn.no/mobility/item/451015720">451015720</a></td>
+<td style="text-align: left;">Citroen ë-SpaceTourer</td>
 <td style="text-align: left;">195 000 kr</td>
 <td style="text-align: right;">2020</td>
 <td style="text-align: left;">35 000</td>
@@ -240,6 +286,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </tr>
 <tr class="even">
 <td style="text-align: left;"><a href="https://www.finn.no/mobility/item/441656103">441656103</a></td>
+<td style="text-align: left;">Citroen ë-SpaceTourer</td>
 <td style="text-align: left;">374 434 kr</td>
 <td style="text-align: right;">2021</td>
 <td style="text-align: left;">44 000</td>
@@ -251,6 +298,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </tr>
 <tr class="odd">
 <td style="text-align: left;"><a href="https://www.finn.no/mobility/item/460924816">460924816</a></td>
+<td style="text-align: left;">Citroen ë-SpaceTourer</td>
 <td style="text-align: left;">374 900 kr</td>
 <td style="text-align: right;">2024</td>
 <td style="text-align: left;">8</td>
@@ -262,6 +310,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </tr>
 <tr class="even">
 <td style="text-align: left;"><a href="https://www.finn.no/mobility/item/462489982">462489982</a></td>
+<td style="text-align: left;">Citroen ë-SpaceTourer</td>
 <td style="text-align: left;">375 000 kr</td>
 <td style="text-align: right;">2021</td>
 <td style="text-align: left;">65 000</td>
@@ -273,6 +322,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </tr>
 <tr class="odd">
 <td style="text-align: left;"><a href="https://www.finn.no/mobility/item/460885571">460885571</a></td>
+<td style="text-align: left;">Citroen ë-SpaceTourer</td>
 <td style="text-align: left;">379 900 kr</td>
 <td style="text-align: right;">2024</td>
 <td style="text-align: left;">5</td>
@@ -284,6 +334,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </tr>
 <tr class="even">
 <td style="text-align: left;"><a href="https://www.finn.no/mobility/item/463485562">463485562</a></td>
+<td style="text-align: left;">Citroen ë-SpaceTourer</td>
 <td style="text-align: left;">779 000 kr</td>
 <td style="text-align: right;">2026</td>
 <td style="text-align: left;">5 000</td>
@@ -300,14 +351,24 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <div class="cell">
 <details class="code-fold">
 <summary>Code</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>relevant <span class="sc">|&gt;</span></span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">count</span>(model_year, battery_kwh, seats, length_variant, county, <span class="at">sort =</span> <span class="cn">TRUE</span>) <span class="sc">|&gt;</span></span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">kable</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>relevant <span class="sc">|&gt;</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">count</span>(vehicle_model, model_year, battery_kwh, seats, length_variant, county, <span class="at">sort =</span> <span class="cn">TRUE</span>) <span class="sc">|&gt;</span></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">kable</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 <div class="cell-output-display">
 <table class="caption-top table table-sm table-striped small">
+<colgroup>
+<col style="width: 28%">
+<col style="width: 14%">
+<col style="width: 15%">
+<col style="width: 7%">
+<col style="width: 19%">
+<col style="width: 11%">
+<col style="width: 3%">
+</colgroup>
 <thead>
 <tr class="header">
+<th style="text-align: left;">vehicle_model</th>
 <th style="text-align: right;">model_year</th>
 <th style="text-align: right;">battery_kwh</th>
 <th style="text-align: right;">seats</th>
@@ -318,6 +379,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </thead>
 <tbody>
 <tr class="odd">
+<td style="text-align: left;">Citroen ë-SpaceTourer</td>
 <td style="text-align: right;">2021</td>
 <td style="text-align: right;">75</td>
 <td style="text-align: right;">8</td>
@@ -326,6 +388,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <td style="text-align: right;">2</td>
 </tr>
 <tr class="even">
+<td style="text-align: left;">Citroen ë-SpaceTourer</td>
 <td style="text-align: right;">2024</td>
 <td style="text-align: right;">75</td>
 <td style="text-align: right;">6</td>
@@ -334,6 +397,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <td style="text-align: right;">2</td>
 </tr>
 <tr class="odd">
+<td style="text-align: left;">Citroen ë-SpaceTourer</td>
 <td style="text-align: right;">2020</td>
 <td style="text-align: right;">50</td>
 <td style="text-align: right;">9</td>
@@ -342,6 +406,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <td style="text-align: right;">1</td>
 </tr>
 <tr class="even">
+<td style="text-align: left;">Citroen ë-SpaceTourer</td>
 <td style="text-align: right;">2026</td>
 <td style="text-align: right;">75</td>
 <td style="text-align: right;">9</td>
@@ -359,19 +424,19 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <div class="cell">
 <details class="code-fold">
 <summary>Code</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(relevant, <span class="fu">aes</span>(km, price, <span class="at">color =</span> county)) <span class="sc">+</span></span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="fu">aes</span>(<span class="at">size =</span> battery_kwh), <span class="at">alpha =</span> <span class="fl">0.85</span>) <span class="sc">+</span></span>
-<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_text</span>(<span class="fu">aes</span>(<span class="at">label =</span> url_id), <span class="at">nudge_y =</span> <span class="dv">17000</span>, <span class="at">size =</span> <span class="dv">3</span>, <span class="at">show.legend =</span> <span class="cn">FALSE</span>) <span class="sc">+</span></span>
-<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_x_continuous</span>(<span class="at">labels =</span> <span class="fu">label_number</span>(<span class="at">big.mark =</span> <span class="st">" "</span>, <span class="at">suffix =</span> <span class="st">" km"</span>)) <span class="sc">+</span></span>
-<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_y_continuous</span>(<span class="at">labels =</span> money) <span class="sc">+</span></span>
-<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_size_continuous</span>(<span class="at">name =</span> <span class="st">"Batteri kWh"</span>, <span class="at">range =</span> <span class="fu">c</span>(<span class="fl">2.5</span>, <span class="dv">5</span>), <span class="at">breaks =</span> <span class="fu">c</span>(<span class="dv">50</span>, <span class="dv">75</span>)) <span class="sc">+</span></span>
-<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"Kilometerstand"</span>, <span class="at">y =</span> <span class="st">"Pris"</span>, <span class="at">color =</span> <span class="st">"Fylke"</span>) <span class="sc">+</span></span>
-<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(market, <span class="fu">aes</span>(km, price, <span class="at">color =</span> county)) <span class="sc">+</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="fu">aes</span>(<span class="at">size =</span> battery_kwh, <span class="at">shape =</span> vehicle_model), <span class="at">alpha =</span> <span class="fl">0.85</span>) <span class="sc">+</span></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_text</span>(<span class="at">data =</span> relevant, <span class="fu">aes</span>(<span class="at">label =</span> url_id), <span class="at">nudge_y =</span> <span class="dv">17000</span>, <span class="at">size =</span> <span class="dv">3</span>, <span class="at">show.legend =</span> <span class="cn">FALSE</span>) <span class="sc">+</span></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_x_continuous</span>(<span class="at">labels =</span> <span class="fu">label_number</span>(<span class="at">big.mark =</span> <span class="st">" "</span>, <span class="at">suffix =</span> <span class="st">" km"</span>)) <span class="sc">+</span></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_y_continuous</span>(<span class="at">labels =</span> money) <span class="sc">+</span></span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_size_continuous</span>(<span class="at">name =</span> <span class="st">"Batteri kWh"</span>, <span class="at">range =</span> <span class="fu">c</span>(<span class="fl">2.5</span>, <span class="dv">5</span>), <span class="at">breaks =</span> <span class="fu">c</span>(<span class="dv">50</span>, <span class="dv">75</span>)) <span class="sc">+</span></span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"Kilometerstand"</span>, <span class="at">y =</span> <span class="st">"Pris"</span>, <span class="at">color =</span> <span class="st">"Fylke"</span>, <span class="at">shape =</span> <span class="st">"Bilmodell"</span>) <span class="sc">+</span></span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="index_files/figure-html/unnamed-chunk-5-1.png" class="img-fluid figure-img" width="672"></p>
+<p><img src="index_files/figure-html/unnamed-chunk-6-1.png" class="img-fluid figure-img" width="672"></p>
 </figure>
 </div>
 </div>
@@ -382,28 +447,28 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <div class="cell">
 <details class="code-fold">
 <summary>Code</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>comparisons <span class="sc">|&gt;</span></span>
-<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">transmute</span>(</span>
-<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">modell =</span> model,</span>
-<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>    <span class="st">`</span><span class="at">R2</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">round</span>(glance_r.squared, <span class="dv">3</span>),</span>
-<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>    <span class="st">`</span><span class="at">adj. R2</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">round</span>(glance_adj.r.squared, <span class="dv">3</span>),</span>
-<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">AIC =</span> <span class="fu">round</span>(glance_AIC, <span class="dv">1</span>),</span>
-<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>    <span class="st">`</span><span class="at">LOOCV MAE</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">money</span>(loocv_mae),</span>
-<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>    <span class="st">`</span><span class="at">LOOCV RMSE</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">money</span>(loocv_rmse),</span>
-<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>    <span class="st">`</span><span class="at">LOOCV feilede folds</span><span class="st">`</span> <span class="ot">=</span> loocv_n_failed</span>
-<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span></span>
-<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">kable</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>comparisons <span class="sc">|&gt;</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">transmute</span>(</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">modell =</span> model,</span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>    <span class="st">`</span><span class="at">R2</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">round</span>(glance_r.squared, <span class="dv">3</span>),</span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>    <span class="st">`</span><span class="at">adj. R2</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">round</span>(glance_adj.r.squared, <span class="dv">3</span>),</span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">AIC =</span> <span class="fu">round</span>(glance_AIC, <span class="dv">1</span>),</span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>    <span class="st">`</span><span class="at">LOOCV MAE</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">money</span>(loocv_mae),</span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>    <span class="st">`</span><span class="at">LOOCV RMSE</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">money</span>(loocv_rmse),</span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>    <span class="st">`</span><span class="at">LOOCV feilede folds</span><span class="st">`</span> <span class="ot">=</span> loocv_n_failed</span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span></span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">kable</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 <div class="cell-output-display">
 <table class="caption-top table table-sm table-striped small">
 <colgroup>
-<col style="width: 18%">
-<col style="width: 7%">
-<col style="width: 10%">
-<col style="width: 7%">
-<col style="width: 13%">
-<col style="width: 16%">
 <col style="width: 25%">
+<col style="width: 7%">
+<col style="width: 9%">
+<col style="width: 7%">
+<col style="width: 12%">
+<col style="width: 13%">
+<col style="width: 24%">
 </colgroup>
 <thead>
 <tr class="header">
@@ -419,20 +484,29 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <tbody>
 <tr class="odd">
 <td style="text-align: left;">age_km</td>
-<td style="text-align: right;">0.876</td>
-<td style="text-align: right;">0.793</td>
-<td style="text-align: right;">1.5</td>
-<td style="text-align: left;">568 276 kr</td>
-<td style="text-align: left;">1 276 361 kr</td>
+<td style="text-align: right;">0.646</td>
+<td style="text-align: right;">0.622</td>
+<td style="text-align: right;">-12.0</td>
+<td style="text-align: left;">58 685 kr</td>
+<td style="text-align: left;">79 048 kr</td>
 <td style="text-align: right;">0</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">age_km_battery</td>
-<td style="text-align: right;">0.999</td>
-<td style="text-align: right;">0.998</td>
-<td style="text-align: right;">-25.9</td>
-<td style="text-align: left;">103 419 kr</td>
-<td style="text-align: left;">195 439 kr</td>
+<td style="text-align: right;">0.683</td>
+<td style="text-align: right;">0.650</td>
+<td style="text-align: right;">-13.7</td>
+<td style="text-align: left;">59 261 kr</td>
+<td style="text-align: left;">78 247 kr</td>
+<td style="text-align: right;">0</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">age_km_battery_model</td>
+<td style="text-align: right;">0.752</td>
+<td style="text-align: right;">0.694</td>
+<td style="text-align: right;">-15.7</td>
+<td style="text-align: left;">56 990 kr</td>
+<td style="text-align: left;">74 904 kr</td>
 <td style="text-align: right;">0</td>
 </tr>
 </tbody>
@@ -443,17 +517,24 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <div class="cell">
 <details class="code-fold">
 <summary>Code</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>broom<span class="sc">::</span><span class="fu">tidy</span>(fit) <span class="sc">|&gt;</span></span>
-<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
-<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">estimate =</span> <span class="fu">round</span>(estimate, <span class="dv">4</span>),</span>
-<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">std.error =</span> <span class="fu">round</span>(std.error, <span class="dv">4</span>),</span>
-<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">statistic =</span> <span class="fu">round</span>(statistic, <span class="dv">2</span>),</span>
-<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">p.value =</span> <span class="fu">signif</span>(p.value, <span class="dv">3</span>)</span>
-<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span></span>
-<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">kable</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>broom<span class="sc">::</span><span class="fu">tidy</span>(fit) <span class="sc">|&gt;</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">estimate =</span> <span class="fu">round</span>(estimate, <span class="dv">4</span>),</span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">std.error =</span> <span class="fu">round</span>(std.error, <span class="dv">4</span>),</span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">statistic =</span> <span class="fu">round</span>(statistic, <span class="dv">2</span>),</span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">p.value =</span> <span class="fu">signif</span>(p.value, <span class="dv">3</span>)</span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span></span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">kable</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 <div class="cell-output-display">
 <table class="caption-top table table-sm table-striped small">
+<colgroup>
+<col style="width: 52%">
+<col style="width: 11%">
+<col style="width: 12%">
+<col style="width: 12%">
+<col style="width: 11%">
+</colgroup>
 <thead>
 <tr class="header">
 <th style="text-align: left;">term</th>
@@ -466,31 +547,52 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <tbody>
 <tr class="odd">
 <td style="text-align: left;">(Intercept)</td>
-<td style="text-align: right;">12.6191</td>
-<td style="text-align: right;">0.0375</td>
-<td style="text-align: right;">336.13</td>
-<td style="text-align: right;">8.80e-06</td>
+<td style="text-align: right;">13.1220</td>
+<td style="text-align: right;">0.1555</td>
+<td style="text-align: right;">84.40</td>
+<td style="text-align: right;">0.00e+00</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">ad_age_years</td>
-<td style="text-align: right;">-0.1736</td>
-<td style="text-align: right;">0.0057</td>
-<td style="text-align: right;">-30.23</td>
-<td style="text-align: right;">1.09e-03</td>
+<td style="text-align: right;">-0.1999</td>
+<td style="text-align: right;">0.0314</td>
+<td style="text-align: right;">-6.37</td>
+<td style="text-align: right;">9.00e-07</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">log_km</td>
-<td style="text-align: right;">0.0576</td>
-<td style="text-align: right;">0.0027</td>
-<td style="text-align: right;">21.05</td>
-<td style="text-align: right;">2.25e-03</td>
+<td style="text-align: right;">0.0441</td>
+<td style="text-align: right;">0.0192</td>
+<td style="text-align: right;">2.30</td>
+<td style="text-align: right;">3.00e-02</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">battery_75TRUE</td>
-<td style="text-align: right;">0.4549</td>
-<td style="text-align: right;">0.0279</td>
-<td style="text-align: right;">16.30</td>
-<td style="text-align: right;">3.74e-03</td>
+<td style="text-align: right;">0.0779</td>
+<td style="text-align: right;">0.0798</td>
+<td style="text-align: right;">0.98</td>
+<td style="text-align: right;">3.38e-01</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">vehicle_modelOpel Zafira-e Life</td>
+<td style="text-align: right;">-0.1139</td>
+<td style="text-align: right;">0.1099</td>
+<td style="text-align: right;">-1.04</td>
+<td style="text-align: right;">3.10e-01</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">vehicle_modelPeugeot e-Traveller</td>
+<td style="text-align: right;">0.1155</td>
+<td style="text-align: right;">0.1026</td>
+<td style="text-align: right;">1.13</td>
+<td style="text-align: right;">2.71e-01</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">vehicle_modelToyota Proace Verso Electric</td>
+<td style="text-align: right;">0.0423</td>
+<td style="text-align: right;">0.1010</td>
+<td style="text-align: right;">0.42</td>
+<td style="text-align: right;">6.79e-01</td>
 </tr>
 </tbody>
 </table>
@@ -499,11 +601,11 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <div class="cell">
 <details class="code-fold">
 <summary>Code</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">bind_cols</span>(metrics, comparisons <span class="sc">|&gt;</span> <span class="fu">filter</span>(model <span class="sc">==</span> selected_model)) <span class="sc">|&gt;</span></span>
-<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(n, r_squared, adj_r_squared, rmse, mae, median_abs_error, mean_abs_pct_error, max_abs_error, loocv_mae, loocv_rmse) <span class="sc">|&gt;</span></span>
-<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="fu">across</span>(<span class="fu">where</span>(is.numeric), <span class="sc">~</span> <span class="fu">round</span>(.x, <span class="dv">3</span>))) <span class="sc">|&gt;</span></span>
-<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_longer</span>(<span class="fu">everything</span>(), <span class="at">names_to =</span> <span class="st">"metric"</span>, <span class="at">values_to =</span> <span class="st">"value"</span>) <span class="sc">|&gt;</span></span>
-<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">kable</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">bind_cols</span>(metrics, comparisons <span class="sc">|&gt;</span> <span class="fu">filter</span>(model <span class="sc">==</span> selected_model)) <span class="sc">|&gt;</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(n, r_squared, adj_r_squared, rmse, mae, median_abs_error, mean_abs_pct_error, max_abs_error, loocv_mae, loocv_rmse) <span class="sc">|&gt;</span></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="fu">across</span>(<span class="fu">where</span>(is.numeric), <span class="sc">~</span> <span class="fu">round</span>(.x, <span class="dv">3</span>))) <span class="sc">|&gt;</span></span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_longer</span>(<span class="fu">everything</span>(), <span class="at">names_to =</span> <span class="st">"metric"</span>, <span class="at">values_to =</span> <span class="st">"value"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">kable</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 <div class="cell-output-display">
 <table class="caption-top table table-sm table-striped small">
@@ -516,43 +618,43 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <tbody>
 <tr class="odd">
 <td style="text-align: left;">n</td>
-<td style="text-align: right;">6.000</td>
+<td style="text-align: right;">33.000</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">r_squared</td>
-<td style="text-align: right;">0.999</td>
+<td style="text-align: right;">0.752</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">adj_r_squared</td>
-<td style="text-align: right;">0.998</td>
+<td style="text-align: right;">0.694</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">rmse</td>
-<td style="text-align: right;">4603.814</td>
+<td style="text-align: right;">60995.337</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">mae</td>
-<td style="text-align: right;">3733.902</td>
+<td style="text-align: right;">45612.040</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">median_abs_error</td>
-<td style="text-align: right;">3928.876</td>
+<td style="text-align: right;">33606.167</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">mean_abs_pct_error</td>
-<td style="text-align: right;">0.010</td>
+<td style="text-align: right;">0.114</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">max_abs_error</td>
-<td style="text-align: right;">7221.236</td>
+<td style="text-align: right;">148227.386</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">loocv_mae</td>
-<td style="text-align: right;">103419.095</td>
+<td style="text-align: right;">56990.024</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">loocv_rmse</td>
-<td style="text-align: right;">195438.725</td>
+<td style="text-align: right;">74904.244</td>
 </tr>
 </tbody>
 </table>
@@ -564,33 +666,13 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <div class="cell">
 <details class="code-fold">
 <summary>Code</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(modelled, <span class="fu">aes</span>(predicted, price)) <span class="sc">+</span></span>
-<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="fu">aes</span>(<span class="at">color =</span> county), <span class="at">size =</span> <span class="dv">3</span>, <span class="at">alpha =</span> <span class="fl">0.85</span>) <span class="sc">+</span></span>
-<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_abline</span>(<span class="at">slope =</span> <span class="dv">1</span>, <span class="at">intercept =</span> <span class="dv">0</span>, <span class="at">linetype =</span> <span class="st">"dashed"</span>, <span class="at">color =</span> <span class="st">"#D55E00"</span>) <span class="sc">+</span></span>
-<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_text</span>(<span class="fu">aes</span>(<span class="at">label =</span> url_id), <span class="at">nudge_y =</span> <span class="dv">12000</span>, <span class="at">size =</span> <span class="dv">3</span>, <span class="at">show.legend =</span> <span class="cn">FALSE</span>) <span class="sc">+</span></span>
-<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_x_continuous</span>(<span class="at">labels =</span> money) <span class="sc">+</span></span>
-<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_y_continuous</span>(<span class="at">labels =</span> money) <span class="sc">+</span></span>
-<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"Modellert pris"</span>, <span class="at">y =</span> <span class="st">"Annonsert pris"</span>, <span class="at">color =</span> <span class="st">"Fylke"</span>) <span class="sc">+</span></span>
-<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-</details>
-<div class="cell-output-display">
-<div>
-<figure class="figure">
-<p><img src="index_files/figure-html/unnamed-chunk-9-1.png" class="img-fluid figure-img" width="672"></p>
-</figure>
-</div>
-</div>
-</div>
-<div class="cell">
-<details class="code-fold">
-<summary>Code</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(modelled, <span class="fu">aes</span>(predicted, residual)) <span class="sc">+</span></span>
-<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_hline</span>(<span class="at">yintercept =</span> <span class="dv">0</span>, <span class="at">linetype =</span> <span class="st">"dashed"</span>, <span class="at">color =</span> <span class="st">"#D55E00"</span>) <span class="sc">+</span></span>
-<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="fu">aes</span>(<span class="at">color =</span> county), <span class="at">size =</span> <span class="dv">3</span>, <span class="at">alpha =</span> <span class="fl">0.85</span>) <span class="sc">+</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(modelled, <span class="fu">aes</span>(predicted, price)) <span class="sc">+</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="fu">aes</span>(<span class="at">color =</span> county, <span class="at">shape =</span> vehicle_model), <span class="at">size =</span> <span class="dv">3</span>, <span class="at">alpha =</span> <span class="fl">0.85</span>) <span class="sc">+</span></span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_abline</span>(<span class="at">slope =</span> <span class="dv">1</span>, <span class="at">intercept =</span> <span class="dv">0</span>, <span class="at">linetype =</span> <span class="st">"dashed"</span>, <span class="at">color =</span> <span class="st">"#D55E00"</span>) <span class="sc">+</span></span>
 <span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_text</span>(<span class="fu">aes</span>(<span class="at">label =</span> url_id), <span class="at">nudge_y =</span> <span class="dv">12000</span>, <span class="at">size =</span> <span class="dv">3</span>, <span class="at">show.legend =</span> <span class="cn">FALSE</span>) <span class="sc">+</span></span>
 <span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_x_continuous</span>(<span class="at">labels =</span> money) <span class="sc">+</span></span>
 <span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_y_continuous</span>(<span class="at">labels =</span> money) <span class="sc">+</span></span>
-<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"Modellert pris"</span>, <span class="at">y =</span> <span class="st">"Residual: annonsert minus modellert"</span>, <span class="at">color =</span> <span class="st">"Fylke"</span>) <span class="sc">+</span></span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"Modellert pris"</span>, <span class="at">y =</span> <span class="st">"Annonsert pris"</span>, <span class="at">color =</span> <span class="st">"Fylke"</span>, <span class="at">shape =</span> <span class="st">"Bilmodell"</span>) <span class="sc">+</span></span>
 <span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 <div class="cell-output-display">
@@ -604,12 +686,14 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <div class="cell">
 <details class="code-fold">
 <summary>Code</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(modelled, <span class="fu">aes</span>(<span class="at">sample =</span> residual)) <span class="sc">+</span></span>
-<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">stat_qq</span>(<span class="at">alpha =</span> <span class="fl">0.75</span>) <span class="sc">+</span></span>
-<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">stat_qq_line</span>(<span class="at">color =</span> <span class="st">"#D55E00"</span>) <span class="sc">+</span></span>
-<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_y_continuous</span>(<span class="at">labels =</span> money) <span class="sc">+</span></span>
-<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"Teoretiske kvantiler"</span>, <span class="at">y =</span> <span class="st">"Residual"</span>) <span class="sc">+</span></span>
-<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(modelled, <span class="fu">aes</span>(predicted, residual)) <span class="sc">+</span></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_hline</span>(<span class="at">yintercept =</span> <span class="dv">0</span>, <span class="at">linetype =</span> <span class="st">"dashed"</span>, <span class="at">color =</span> <span class="st">"#D55E00"</span>) <span class="sc">+</span></span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="fu">aes</span>(<span class="at">color =</span> county, <span class="at">shape =</span> vehicle_model), <span class="at">size =</span> <span class="dv">3</span>, <span class="at">alpha =</span> <span class="fl">0.85</span>) <span class="sc">+</span></span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_text</span>(<span class="fu">aes</span>(<span class="at">label =</span> url_id), <span class="at">nudge_y =</span> <span class="dv">12000</span>, <span class="at">size =</span> <span class="dv">3</span>, <span class="at">show.legend =</span> <span class="cn">FALSE</span>) <span class="sc">+</span></span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_x_continuous</span>(<span class="at">labels =</span> money) <span class="sc">+</span></span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_y_continuous</span>(<span class="at">labels =</span> money) <span class="sc">+</span></span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"Modellert pris"</span>, <span class="at">y =</span> <span class="st">"Residual: annonsert minus modellert"</span>, <span class="at">color =</span> <span class="st">"Fylke"</span>, <span class="at">shape =</span> <span class="st">"Bilmodell"</span>) <span class="sc">+</span></span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 <div class="cell-output-display">
 <div>
@@ -622,33 +706,54 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <div class="cell">
 <details class="code-fold">
 <summary>Code</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>modelled <span class="sc">|&gt;</span></span>
-<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(<span class="fu">desc</span>(cooks_d)) <span class="sc">|&gt;</span></span>
-<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">transmute</span>(</span>
-<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">FINN =</span> <span class="fu">sprintf</span>(<span class="st">"&lt;a href='%s'&gt;%s&lt;/a&gt;"</span>, url, url_id),</span>
-<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">pris =</span> <span class="fu">money</span>(price),</span>
-<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">predikert =</span> <span class="fu">money</span>(predicted),</span>
-<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">residual =</span> <span class="fu">money</span>(residual),</span>
-<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a>    <span class="st">`</span><span class="at">student-residual</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">round</span>(student_residual, <span class="dv">2</span>),</span>
-<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a>    <span class="st">`</span><span class="at">Cook's D</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">round</span>(cooks_d, <span class="dv">3</span>),</span>
-<span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">leverage =</span> <span class="fu">round</span>(leverage, <span class="dv">3</span>)</span>
-<span id="cb12-11"><a href="#cb12-11" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span></span>
-<span id="cb12-12"><a href="#cb12-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">kable</span>(<span class="at">escape =</span> <span class="cn">FALSE</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(modelled, <span class="fu">aes</span>(<span class="at">sample =</span> residual)) <span class="sc">+</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">stat_qq</span>(<span class="at">alpha =</span> <span class="fl">0.75</span>) <span class="sc">+</span></span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">stat_qq_line</span>(<span class="at">color =</span> <span class="st">"#D55E00"</span>) <span class="sc">+</span></span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_y_continuous</span>(<span class="at">labels =</span> money) <span class="sc">+</span></span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"Teoretiske kvantiler"</span>, <span class="at">y =</span> <span class="st">"Residual"</span>) <span class="sc">+</span></span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="index_files/figure-html/unnamed-chunk-12-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>modelled <span class="sc">|&gt;</span></span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(<span class="fu">desc</span>(cooks_d)) <span class="sc">|&gt;</span></span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">transmute</span>(</span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">FINN =</span> <span class="fu">sprintf</span>(<span class="st">"&lt;a href='%s'&gt;%s&lt;/a&gt;"</span>, url, url_id),</span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">modell =</span> vehicle_model,</span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">pris =</span> <span class="fu">money</span>(price),</span>
+<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">predikert =</span> <span class="fu">money</span>(predicted),</span>
+<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">residual =</span> <span class="fu">money</span>(residual),</span>
+<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a>    <span class="st">`</span><span class="at">student-residual</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">round</span>(student_residual, <span class="dv">2</span>),</span>
+<span id="cb13-10"><a href="#cb13-10" aria-hidden="true" tabindex="-1"></a>    <span class="st">`</span><span class="at">Cook's D</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">round</span>(cooks_d, <span class="dv">3</span>),</span>
+<span id="cb13-11"><a href="#cb13-11" aria-hidden="true" tabindex="-1"></a>    <span class="at">leverage =</span> <span class="fu">round</span>(leverage, <span class="dv">3</span>)</span>
+<span id="cb13-12"><a href="#cb13-12" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span></span>
+<span id="cb13-13"><a href="#cb13-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">kable</span>(<span class="at">escape =</span> <span class="cn">FALSE</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 <div class="cell-output-display">
 <table class="caption-top table table-sm table-striped small">
 <colgroup>
-<col style="width: 50%">
-<col style="width: 8%">
-<col style="width: 8%">
+<col style="width: 40%">
+<col style="width: 17%">
+<col style="width: 6%">
+<col style="width: 6%">
 <col style="width: 7%">
-<col style="width: 12%">
-<col style="width: 6%">
-<col style="width: 6%">
+<col style="width: 10%">
+<col style="width: 5%">
+<col style="width: 5%">
 </colgroup>
 <thead>
 <tr class="header">
 <th style="text-align: left;">FINN</th>
+<th style="text-align: left;">modell</th>
 <th style="text-align: left;">pris</th>
 <th style="text-align: left;">predikert</th>
 <th style="text-align: left;">residual</th>
@@ -659,58 +764,334 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </thead>
 <tbody>
 <tr class="odd">
-<td style="text-align: left;"><a href="https://www.finn.no/mobility/item/463485562">463485562</a></td>
-<td style="text-align: left;">779 000 kr</td>
-<td style="text-align: left;">778 280 kr</td>
-<td style="text-align: left;">720 kr</td>
-<td style="text-align: right;">3.99</td>
-<td style="text-align: right;">461.410</td>
-<td style="text-align: right;">0.999</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;"><a href="https://www.finn.no/mobility/item/460885571">460885571</a></td>
-<td style="text-align: left;">379 900 kr</td>
-<td style="text-align: left;">373 296 kr</td>
-<td style="text-align: left;">6 604 kr</td>
-<td style="text-align: right;">1.64</td>
-<td style="text-align: right;">0.406</td>
-<td style="text-align: right;">0.527</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;"><a href="https://www.finn.no/mobility/item/460924816">460924816</a></td>
-<td style="text-align: left;">374 900 kr</td>
-<td style="text-align: left;">382 121 kr</td>
-<td style="text-align: left;">-7 221 kr</td>
-<td style="text-align: right;">-1.85</td>
-<td style="text-align: right;">0.347</td>
-<td style="text-align: right;">0.473</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;"><a href="https://www.finn.no/mobility/item/462489982">462489982</a></td>
-<td style="text-align: left;">375 000 kr</td>
-<td style="text-align: left;">378 837 kr</td>
-<td style="text-align: left;">-3 837 kr</td>
-<td style="text-align: right;">-0.56</td>
-<td style="text-align: right;">0.124</td>
-<td style="text-align: right;">0.511</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;"><a href="https://www.finn.no/mobility/item/441656103">441656103</a></td>
-<td style="text-align: left;">374 434 kr</td>
-<td style="text-align: left;">370 413 kr</td>
-<td style="text-align: left;">4 021 kr</td>
-<td style="text-align: right;">0.59</td>
-<td style="text-align: right;">0.123</td>
-<td style="text-align: right;">0.490</td>
+<td style="text-align: left;"><a href="https://www.finn.no/mobility/item/461006616">461006616</a></td>
+<td style="text-align: left;">Opel Zafira-e Life</td>
+<td style="text-align: left;">299 900 kr</td>
+<td style="text-align: left;">448 127 kr</td>
+<td style="text-align: left;">-148 227 kr</td>
+<td style="text-align: right;">-3.12</td>
+<td style="text-align: right;">0.298</td>
+<td style="text-align: right;">0.222</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;"><a href="https://www.finn.no/mobility/item/451015720">451015720</a></td>
+<td style="text-align: left;">Citroen ë-SpaceTourer</td>
 <td style="text-align: left;">195 000 kr</td>
-<td style="text-align: left;">195 000 kr</td>
-<td style="text-align: left;">0 kr</td>
-<td style="text-align: right;">NaN</td>
-<td style="text-align: right;">NaN</td>
-<td style="text-align: right;">1.000</td>
+<td style="text-align: left;">238 934 kr</td>
+<td style="text-align: left;">-43 934 kr</td>
+<td style="text-align: right;">-1.57</td>
+<td style="text-align: right;">0.203</td>
+<td style="text-align: right;">0.378</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><a href="https://www.finn.no/mobility/item/457906888">457906888</a></td>
+<td style="text-align: left;">Toyota Proace Verso Electric</td>
+<td style="text-align: left;">299 800 kr</td>
+<td style="text-align: left;">412 182 kr</td>
+<td style="text-align: left;">-112 382 kr</td>
+<td style="text-align: right;">-2.19</td>
+<td style="text-align: right;">0.107</td>
+<td style="text-align: right;">0.151</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><a href="https://www.finn.no/mobility/item/441656103">441656103</a></td>
+<td style="text-align: left;">Citroen ë-SpaceTourer</td>
+<td style="text-align: left;">374 434 kr</td>
+<td style="text-align: left;">318 653 kr</td>
+<td style="text-align: left;">55 781 kr</td>
+<td style="text-align: right;">1.12</td>
+<td style="text-align: right;">0.066</td>
+<td style="text-align: right;">0.269</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><a href="https://www.finn.no/mobility/item/462489982">462489982</a></td>
+<td style="text-align: left;">Citroen ë-SpaceTourer</td>
+<td style="text-align: left;">375 000 kr</td>
+<td style="text-align: left;">324 183 kr</td>
+<td style="text-align: left;">50 817 kr</td>
+<td style="text-align: right;">1.02</td>
+<td style="text-align: right;">0.060</td>
+<td style="text-align: right;">0.286</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><a href="https://www.finn.no/mobility/item/460244271">460244271</a></td>
+<td style="text-align: left;">Toyota Proace Verso Electric</td>
+<td style="text-align: left;">639 990 kr</td>
+<td style="text-align: left;">501 972 kr</td>
+<td style="text-align: left;">138 018 kr</td>
+<td style="text-align: right;">1.60</td>
+<td style="text-align: right;">0.057</td>
+<td style="text-align: right;">0.142</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><a href="https://www.finn.no/mobility/item/456933969">456933969</a></td>
+<td style="text-align: left;">Toyota Proace Verso Electric</td>
+<td style="text-align: left;">409 000 kr</td>
+<td style="text-align: left;">529 546 kr</td>
+<td style="text-align: left;">-120 546 kr</td>
+<td style="text-align: right;">-1.70</td>
+<td style="text-align: right;">0.057</td>
+<td style="text-align: right;">0.128</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><a href="https://www.finn.no/mobility/item/459060409">459060409</a></td>
+<td style="text-align: left;">Opel Zafira-e Life</td>
+<td style="text-align: left;">319 532 kr</td>
+<td style="text-align: left;">265 980 kr</td>
+<td style="text-align: left;">53 552 kr</td>
+<td style="text-align: right;">1.23</td>
+<td style="text-align: right;">0.053</td>
+<td style="text-align: right;">0.199</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><a href="https://www.finn.no/mobility/item/459405352">459405352</a></td>
+<td style="text-align: left;">Toyota Proace Verso Electric</td>
+<td style="text-align: left;">599 900 kr</td>
+<td style="text-align: left;">464 479 kr</td>
+<td style="text-align: left;">135 421 kr</td>
+<td style="text-align: right;">1.67</td>
+<td style="text-align: right;">0.048</td>
+<td style="text-align: right;">0.114</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><a href="https://www.finn.no/mobility/item/426629986">426629986</a></td>
+<td style="text-align: left;">Peugeot e-Traveller</td>
+<td style="text-align: left;">429 918 kr</td>
+<td style="text-align: left;">355 667 kr</td>
+<td style="text-align: left;">74 251 kr</td>
+<td style="text-align: right;">1.22</td>
+<td style="text-align: right;">0.031</td>
+<td style="text-align: right;">0.130</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><a href="https://www.finn.no/mobility/item/460970224">460970224</a></td>
+<td style="text-align: left;">Opel Zafira-e Life</td>
+<td style="text-align: left;">399 000 kr</td>
+<td style="text-align: left;">347 543 kr</td>
+<td style="text-align: left;">51 457 kr</td>
+<td style="text-align: right;">0.91</td>
+<td style="text-align: right;">0.028</td>
+<td style="text-align: right;">0.189</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><a href="https://www.finn.no/mobility/item/433519464">433519464</a></td>
+<td style="text-align: left;">Opel Zafira-e Life</td>
+<td style="text-align: left;">239 000 kr</td>
+<td style="text-align: left;">272 606 kr</td>
+<td style="text-align: left;">-33 606 kr</td>
+<td style="text-align: right;">-0.86</td>
+<td style="text-align: right;">0.025</td>
+<td style="text-align: right;">0.189</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><a href="https://www.finn.no/mobility/item/460924816">460924816</a></td>
+<td style="text-align: left;">Citroen ë-SpaceTourer</td>
+<td style="text-align: left;">374 900 kr</td>
+<td style="text-align: left;">399 109 kr</td>
+<td style="text-align: left;">-24 209 kr</td>
+<td style="text-align: right;">-0.47</td>
+<td style="text-align: right;">0.022</td>
+<td style="text-align: right;">0.399</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><a href="https://www.finn.no/mobility/item/463476333">463476333</a></td>
+<td style="text-align: left;">Opel Zafira-e Life</td>
+<td style="text-align: left;">429 900 kr</td>
+<td style="text-align: left;">390 466 kr</td>
+<td style="text-align: left;">39 434 kr</td>
+<td style="text-align: right;">0.64</td>
+<td style="text-align: right;">0.016</td>
+<td style="text-align: right;">0.215</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><a href="https://www.finn.no/mobility/item/380539848">380539848</a></td>
+<td style="text-align: left;">Toyota Proace Verso Electric</td>
+<td style="text-align: left;">319 129 kr</td>
+<td style="text-align: left;">349 165 kr</td>
+<td style="text-align: left;">-30 036 kr</td>
+<td style="text-align: right;">-0.60</td>
+<td style="text-align: right;">0.015</td>
+<td style="text-align: right;">0.224</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><a href="https://www.finn.no/mobility/item/437148373">437148373</a></td>
+<td style="text-align: left;">Toyota Proace Verso Electric</td>
+<td style="text-align: left;">659 000 kr</td>
+<td style="text-align: left;">584 866 kr</td>
+<td style="text-align: left;">74 134 kr</td>
+<td style="text-align: right;">0.76</td>
+<td style="text-align: right;">0.015</td>
+<td style="text-align: right;">0.148</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><a href="https://www.finn.no/mobility/item/459723398">459723398</a></td>
+<td style="text-align: left;">Peugeot e-Traveller</td>
+<td style="text-align: left;">329 900 kr</td>
+<td style="text-align: left;">371 637 kr</td>
+<td style="text-align: left;">-41 737 kr</td>
+<td style="text-align: right;">-0.75</td>
+<td style="text-align: right;">0.011</td>
+<td style="text-align: right;">0.122</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><a href="https://www.finn.no/mobility/item/458788597">458788597</a></td>
+<td style="text-align: left;">Peugeot e-Traveller</td>
+<td style="text-align: left;">339 532 kr</td>
+<td style="text-align: left;">375 778 kr</td>
+<td style="text-align: left;">-36 246 kr</td>
+<td style="text-align: right;">-0.64</td>
+<td style="text-align: right;">0.008</td>
+<td style="text-align: right;">0.124</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><a href="https://www.finn.no/mobility/item/460885571">460885571</a></td>
+<td style="text-align: left;">Citroen ë-SpaceTourer</td>
+<td style="text-align: left;">379 900 kr</td>
+<td style="text-align: left;">392 037 kr</td>
+<td style="text-align: left;">-12 137 kr</td>
+<td style="text-align: right;">-0.25</td>
+<td style="text-align: right;">0.007</td>
+<td style="text-align: right;">0.442</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><a href="https://www.finn.no/mobility/item/462910944">462910944</a></td>
+<td style="text-align: left;">Peugeot e-Traveller</td>
+<td style="text-align: left;">399 532 kr</td>
+<td style="text-align: left;">364 953 kr</td>
+<td style="text-align: left;">34 579 kr</td>
+<td style="text-align: right;">0.57</td>
+<td style="text-align: right;">0.007</td>
+<td style="text-align: right;">0.122</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><a href="https://www.finn.no/mobility/item/455979534">455979534</a></td>
+<td style="text-align: left;">Peugeot e-Traveller</td>
+<td style="text-align: left;">389 000 kr</td>
+<td style="text-align: left;">407 884 kr</td>
+<td style="text-align: left;">-18 884 kr</td>
+<td style="text-align: right;">-0.32</td>
+<td style="text-align: right;">0.005</td>
+<td style="text-align: right;">0.261</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><a href="https://www.finn.no/mobility/item/460798037">460798037</a></td>
+<td style="text-align: left;">Peugeot e-Traveller</td>
+<td style="text-align: left;">339 532 kr</td>
+<td style="text-align: left;">365 947 kr</td>
+<td style="text-align: left;">-26 415 kr</td>
+<td style="text-align: right;">-0.47</td>
+<td style="text-align: right;">0.004</td>
+<td style="text-align: right;">0.122</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><a href="https://www.finn.no/mobility/item/450759876">450759876</a></td>
+<td style="text-align: left;">Opel Zafira-e Life</td>
+<td style="text-align: left;">599 000 kr</td>
+<td style="text-align: left;">576 455 kr</td>
+<td style="text-align: left;">22 545 kr</td>
+<td style="text-align: right;">0.26</td>
+<td style="text-align: right;">0.004</td>
+<td style="text-align: right;">0.284</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><a href="https://www.finn.no/mobility/item/460486066">460486066</a></td>
+<td style="text-align: left;">Opel Zafira-e Life</td>
+<td style="text-align: left;">357 000 kr</td>
+<td style="text-align: left;">341 452 kr</td>
+<td style="text-align: left;">15 548 kr</td>
+<td style="text-align: right;">0.29</td>
+<td style="text-align: right;">0.003</td>
+<td style="text-align: right;">0.196</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><a href="https://www.finn.no/mobility/item/461492193">461492193</a></td>
+<td style="text-align: left;">Toyota Proace Verso Electric</td>
+<td style="text-align: left;">619 000 kr</td>
+<td style="text-align: left;">593 622 kr</td>
+<td style="text-align: left;">25 378 kr</td>
+<td style="text-align: right;">0.27</td>
+<td style="text-align: right;">0.003</td>
+<td style="text-align: right;">0.205</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><a href="https://www.finn.no/mobility/item/463485562">463485562</a></td>
+<td style="text-align: left;">Citroen ë-SpaceTourer</td>
+<td style="text-align: left;">779 000 kr</td>
+<td style="text-align: left;">786 607 kr</td>
+<td style="text-align: left;">-7 607 kr</td>
+<td style="text-align: right;">-0.09</td>
+<td style="text-align: right;">0.002</td>
+<td style="text-align: right;">0.640</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><a href="https://www.finn.no/mobility/item/463471877">463471877</a></td>
+<td style="text-align: left;">Peugeot e-Traveller</td>
+<td style="text-align: left;">349 000 kr</td>
+<td style="text-align: left;">336 331 kr</td>
+<td style="text-align: left;">12 669 kr</td>
+<td style="text-align: right;">0.24</td>
+<td style="text-align: right;">0.002</td>
+<td style="text-align: right;">0.207</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><a href="https://www.finn.no/mobility/item/462879973">462879973</a></td>
+<td style="text-align: left;">Peugeot e-Traveller</td>
+<td style="text-align: left;">349 000 kr</td>
+<td style="text-align: left;">367 166 kr</td>
+<td style="text-align: left;">-18 166 kr</td>
+<td style="text-align: right;">-0.32</td>
+<td style="text-align: right;">0.002</td>
+<td style="text-align: right;">0.122</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><a href="https://www.finn.no/mobility/item/463472940">463472940</a></td>
+<td style="text-align: left;">Peugeot e-Traveller</td>
+<td style="text-align: left;">349 000 kr</td>
+<td style="text-align: left;">337 686 kr</td>
+<td style="text-align: left;">11 314 kr</td>
+<td style="text-align: right;">0.22</td>
+<td style="text-align: right;">0.002</td>
+<td style="text-align: right;">0.207</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><a href="https://www.finn.no/mobility/item/462768464">462768464</a></td>
+<td style="text-align: left;">Opel Zafira-e Life</td>
+<td style="text-align: left;">279 000 kr</td>
+<td style="text-align: left;">270 057 kr</td>
+<td style="text-align: left;">8 943 kr</td>
+<td style="text-align: right;">0.21</td>
+<td style="text-align: right;">0.002</td>
+<td style="text-align: right;">0.192</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><a href="https://www.finn.no/mobility/item/460911550">460911550</a></td>
+<td style="text-align: left;">Peugeot e-Traveller</td>
+<td style="text-align: left;">379 000 kr</td>
+<td style="text-align: left;">362 843 kr</td>
+<td style="text-align: left;">16 157 kr</td>
+<td style="text-align: right;">0.27</td>
+<td style="text-align: right;">0.002</td>
+<td style="text-align: right;">0.123</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><a href="https://www.finn.no/mobility/item/459852675">459852675</a></td>
+<td style="text-align: left;">Toyota Proace Verso Electric</td>
+<td style="text-align: left;">549 000 kr</td>
+<td style="text-align: left;">541 605 kr</td>
+<td style="text-align: left;">7 395 kr</td>
+<td style="text-align: right;">0.08</td>
+<td style="text-align: right;">0.000</td>
+<td style="text-align: right;">0.121</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><a href="https://www.finn.no/mobility/item/460240451">460240451</a></td>
+<td style="text-align: left;">Toyota Proace Verso Electric</td>
+<td style="text-align: left;">529 000 kr</td>
+<td style="text-align: left;">532 672 kr</td>
+<td style="text-align: left;">-3 672 kr</td>
+<td style="text-align: right;">-0.04</td>
+<td style="text-align: right;">0.000</td>
+<td style="text-align: right;">0.126</td>
 </tr>
 </tbody>
 </table>
@@ -722,44 +1103,47 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <div class="cell">
 <details class="code-fold">
 <summary>Code</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>ranked <span class="sc">|&gt;</span></span>
-<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">transmute</span>(</span>
-<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">rang =</span> <span class="fu">row_number</span>(),</span>
-<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">FINN =</span> <span class="fu">sprintf</span>(<span class="st">"&lt;a href='%s'&gt;%s&lt;/a&gt;"</span>, url, url_id),</span>
-<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">annonse =</span> <span class="fu">coalesce</span>(subtitle, description, title),</span>
-<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">pris =</span> <span class="fu">money</span>(price),</span>
-<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">predikert =</span> <span class="fu">money</span>(predicted),</span>
-<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">residual =</span> <span class="fu">money</span>(residual),</span>
-<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a>    <span class="st">`</span><span class="at">relativ residual</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">pct</span>(pct_residual),</span>
-<span id="cb13-10"><a href="#cb13-10" aria-hidden="true" tabindex="-1"></a>    modellår <span class="ot">=</span> model_year,</span>
-<span id="cb13-11"><a href="#cb13-11" aria-hidden="true" tabindex="-1"></a>    <span class="at">km =</span> <span class="fu">comma</span>(km, <span class="at">big.mark =</span> <span class="st">" "</span>),</span>
-<span id="cb13-12"><a href="#cb13-12" aria-hidden="true" tabindex="-1"></a>    <span class="at">batteri =</span> <span class="fu">paste0</span>(battery_kwh_model, <span class="st">" kWh"</span>),</span>
-<span id="cb13-13"><a href="#cb13-13" aria-hidden="true" tabindex="-1"></a>    <span class="at">seter =</span> seats,</span>
-<span id="cb13-14"><a href="#cb13-14" aria-hidden="true" tabindex="-1"></a>    <span class="at">fylke =</span> county</span>
-<span id="cb13-15"><a href="#cb13-15" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span></span>
-<span id="cb13-16"><a href="#cb13-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">kable</span>(<span class="at">escape =</span> <span class="cn">FALSE</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>ranked <span class="sc">|&gt;</span></span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">transmute</span>(</span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">rang =</span> <span class="fu">row_number</span>(),</span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">FINN =</span> <span class="fu">sprintf</span>(<span class="st">"&lt;a href='%s'&gt;%s&lt;/a&gt;"</span>, url, url_id),</span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">annonse =</span> <span class="fu">coalesce</span>(subtitle, description, title),</span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">modell =</span> vehicle_model,</span>
+<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">pris =</span> <span class="fu">money</span>(price),</span>
+<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">predikert =</span> <span class="fu">money</span>(predicted),</span>
+<span id="cb14-9"><a href="#cb14-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">residual =</span> <span class="fu">money</span>(residual),</span>
+<span id="cb14-10"><a href="#cb14-10" aria-hidden="true" tabindex="-1"></a>    <span class="st">`</span><span class="at">relativ residual</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">pct</span>(pct_residual),</span>
+<span id="cb14-11"><a href="#cb14-11" aria-hidden="true" tabindex="-1"></a>    modellår <span class="ot">=</span> model_year,</span>
+<span id="cb14-12"><a href="#cb14-12" aria-hidden="true" tabindex="-1"></a>    <span class="at">km =</span> <span class="fu">comma</span>(km, <span class="at">big.mark =</span> <span class="st">" "</span>),</span>
+<span id="cb14-13"><a href="#cb14-13" aria-hidden="true" tabindex="-1"></a>    <span class="at">batteri =</span> <span class="fu">paste0</span>(battery_kwh_model, <span class="st">" kWh"</span>),</span>
+<span id="cb14-14"><a href="#cb14-14" aria-hidden="true" tabindex="-1"></a>    <span class="at">seter =</span> seats,</span>
+<span id="cb14-15"><a href="#cb14-15" aria-hidden="true" tabindex="-1"></a>    <span class="at">fylke =</span> county</span>
+<span id="cb14-16"><a href="#cb14-16" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span></span>
+<span id="cb14-17"><a href="#cb14-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">kable</span>(<span class="at">escape =</span> <span class="cn">FALSE</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 <div class="cell-output-display">
 <table class="caption-top table table-sm table-striped small">
 <colgroup>
 <col style="width: 2%">
-<col style="width: 31%">
-<col style="width: 26%">
-<col style="width: 5%">
-<col style="width: 5%">
+<col style="width: 28%">
+<col style="width: 23%">
+<col style="width: 9%">
+<col style="width: 4%">
+<col style="width: 4%">
 <col style="width: 4%">
 <col style="width: 7%">
-<col style="width: 4%">
-<col style="width: 3%">
 <col style="width: 3%">
 <col style="width: 2%">
-<col style="width: 4%">
+<col style="width: 3%">
+<col style="width: 2%">
+<col style="width: 3%">
 </colgroup>
 <thead>
 <tr class="header">
 <th style="text-align: right;">rang</th>
 <th style="text-align: left;">FINN</th>
 <th style="text-align: left;">annonse</th>
+<th style="text-align: left;">modell</th>
 <th style="text-align: left;">pris</th>
 <th style="text-align: left;">predikert</th>
 <th style="text-align: left;">residual</th>
@@ -774,40 +1158,13 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <tbody>
 <tr class="odd">
 <td style="text-align: right;">1</td>
-<td style="text-align: left;"><a href="https://www.finn.no/mobility/item/460924816">460924816</a></td>
-<td style="text-align: left;">75kWt 6 seter Fantastisk familiebil | Leveringsklar</td>
-<td style="text-align: left;">374 900 kr</td>
-<td style="text-align: left;">382 121 kr</td>
-<td style="text-align: left;">-7 221 kr</td>
-<td style="text-align: left;">-2%</td>
-<td style="text-align: right;">2024</td>
-<td style="text-align: left;">8</td>
-<td style="text-align: left;">75 kWh</td>
-<td style="text-align: right;">6</td>
-<td style="text-align: left;">Akershus</td>
-</tr>
-<tr class="even">
-<td style="text-align: right;">2</td>
-<td style="text-align: left;"><a href="https://www.finn.no/mobility/item/462489982">462489982</a></td>
-<td style="text-align: left;">75kWt L2 Shine</td>
-<td style="text-align: left;">375 000 kr</td>
-<td style="text-align: left;">378 837 kr</td>
-<td style="text-align: left;">-3 837 kr</td>
-<td style="text-align: left;">-1%</td>
-<td style="text-align: right;">2021</td>
-<td style="text-align: left;">65 000</td>
-<td style="text-align: left;">75 kWh</td>
-<td style="text-align: right;">8</td>
-<td style="text-align: left;">Akershus</td>
-</tr>
-<tr class="odd">
-<td style="text-align: right;">3</td>
 <td style="text-align: left;"><a href="https://www.finn.no/mobility/item/451015720">451015720</a></td>
 <td style="text-align: left;">Citroen SpaceTourer</td>
+<td style="text-align: left;">Citroen ë-SpaceTourer</td>
 <td style="text-align: left;">195 000 kr</td>
-<td style="text-align: left;">195 000 kr</td>
-<td style="text-align: left;">0 kr</td>
-<td style="text-align: left;">0%</td>
+<td style="text-align: left;">238 934 kr</td>
+<td style="text-align: left;">-43 934 kr</td>
+<td style="text-align: left;">-18%</td>
 <td style="text-align: right;">2020</td>
 <td style="text-align: left;">35 000</td>
 <td style="text-align: left;">50 kWh</td>
@@ -815,13 +1172,44 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <td style="text-align: left;">Akershus</td>
 </tr>
 <tr class="even">
+<td style="text-align: right;">2</td>
+<td style="text-align: left;"><a href="https://www.finn.no/mobility/item/460924816">460924816</a></td>
+<td style="text-align: left;">75kWt 6 seter Fantastisk familiebil | Leveringsklar</td>
+<td style="text-align: left;">Citroen ë-SpaceTourer</td>
+<td style="text-align: left;">374 900 kr</td>
+<td style="text-align: left;">399 109 kr</td>
+<td style="text-align: left;">-24 209 kr</td>
+<td style="text-align: left;">-6%</td>
+<td style="text-align: right;">2024</td>
+<td style="text-align: left;">8</td>
+<td style="text-align: left;">75 kWh</td>
+<td style="text-align: right;">6</td>
+<td style="text-align: left;">Akershus</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">3</td>
+<td style="text-align: left;"><a href="https://www.finn.no/mobility/item/460885571">460885571</a></td>
+<td style="text-align: left;">75kWt 6 seter MOMSFRADRAG VED LEASING/PÅSKEKAMPANJE</td>
+<td style="text-align: left;">Citroen ë-SpaceTourer</td>
+<td style="text-align: left;">379 900 kr</td>
+<td style="text-align: left;">392 037 kr</td>
+<td style="text-align: left;">-12 137 kr</td>
+<td style="text-align: left;">-3%</td>
+<td style="text-align: right;">2024</td>
+<td style="text-align: left;">5</td>
+<td style="text-align: left;">75 kWh</td>
+<td style="text-align: right;">6</td>
+<td style="text-align: left;">Akershus</td>
+</tr>
+<tr class="even">
 <td style="text-align: right;">4</td>
 <td style="text-align: left;"><a href="https://www.finn.no/mobility/item/463485562">463485562</a></td>
 <td style="text-align: left;">340km 75kWt L3 Plus 9-seter/Ryggekamera/Navigasjon/ACC</td>
+<td style="text-align: left;">Citroen ë-SpaceTourer</td>
 <td style="text-align: left;">779 000 kr</td>
-<td style="text-align: left;">778 280 kr</td>
-<td style="text-align: left;">720 kr</td>
-<td style="text-align: left;">0%</td>
+<td style="text-align: left;">786 607 kr</td>
+<td style="text-align: left;">-7 607 kr</td>
+<td style="text-align: left;">-1%</td>
 <td style="text-align: right;">2026</td>
 <td style="text-align: left;">5 000</td>
 <td style="text-align: left;">75 kWh</td>
@@ -830,30 +1218,32 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </tr>
 <tr class="odd">
 <td style="text-align: right;">5</td>
-<td style="text-align: left;"><a href="https://www.finn.no/mobility/item/441656103">441656103</a></td>
-<td style="text-align: left;">75kWt L3 Shine</td>
-<td style="text-align: left;">374 434 kr</td>
-<td style="text-align: left;">370 413 kr</td>
-<td style="text-align: left;">4 021 kr</td>
-<td style="text-align: left;">1%</td>
+<td style="text-align: left;"><a href="https://www.finn.no/mobility/item/462489982">462489982</a></td>
+<td style="text-align: left;">75kWt L2 Shine</td>
+<td style="text-align: left;">Citroen ë-SpaceTourer</td>
+<td style="text-align: left;">375 000 kr</td>
+<td style="text-align: left;">324 183 kr</td>
+<td style="text-align: left;">50 817 kr</td>
+<td style="text-align: left;">16%</td>
 <td style="text-align: right;">2021</td>
-<td style="text-align: left;">44 000</td>
+<td style="text-align: left;">65 000</td>
 <td style="text-align: left;">75 kWh</td>
 <td style="text-align: right;">8</td>
 <td style="text-align: left;">Akershus</td>
 </tr>
 <tr class="even">
 <td style="text-align: right;">6</td>
-<td style="text-align: left;"><a href="https://www.finn.no/mobility/item/460885571">460885571</a></td>
-<td style="text-align: left;">75kWt 6 seter MOMSFRADRAG VED LEASING/PÅSKEKAMPANJE</td>
-<td style="text-align: left;">379 900 kr</td>
-<td style="text-align: left;">373 296 kr</td>
-<td style="text-align: left;">6 604 kr</td>
-<td style="text-align: left;">2%</td>
-<td style="text-align: right;">2024</td>
-<td style="text-align: left;">5</td>
+<td style="text-align: left;"><a href="https://www.finn.no/mobility/item/441656103">441656103</a></td>
+<td style="text-align: left;">75kWt L3 Shine</td>
+<td style="text-align: left;">Citroen ë-SpaceTourer</td>
+<td style="text-align: left;">374 434 kr</td>
+<td style="text-align: left;">318 653 kr</td>
+<td style="text-align: left;">55 781 kr</td>
+<td style="text-align: left;">18%</td>
+<td style="text-align: right;">2021</td>
+<td style="text-align: left;">44 000</td>
 <td style="text-align: left;">75 kWh</td>
-<td style="text-align: right;">6</td>
+<td style="text-align: right;">8</td>
 <td style="text-align: left;">Akershus</td>
 </tr>
 </tbody>
@@ -866,46 +1256,49 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <div class="cell">
 <details class="code-fold">
 <summary>Code</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>focus <span class="ot">&lt;-</span> modelled <span class="sc">|&gt;</span> <span class="fu">filter</span>(url_id <span class="sc">==</span> focus_id)</span>
-<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (<span class="fu">nrow</span>(focus) <span class="sc">==</span> <span class="dv">0</span>) {</span>
-<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cat</span>(<span class="st">"Annonsen finnes ikke i det gjeldende datasettet."</span>)</span>
-<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>} <span class="cf">else</span> {</span>
-<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>  focus <span class="sc">|&gt;</span></span>
-<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a>    <span class="fu">transmute</span>(</span>
-<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a>      <span class="at">FINN =</span> <span class="fu">sprintf</span>(<span class="st">"&lt;a href='%s'&gt;%s&lt;/a&gt;"</span>, url, url_id),</span>
-<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a>      <span class="at">annonse =</span> <span class="fu">coalesce</span>(subtitle, description, title),</span>
-<span id="cb14-9"><a href="#cb14-9" aria-hidden="true" tabindex="-1"></a>      <span class="at">pris =</span> <span class="fu">money</span>(price),</span>
-<span id="cb14-10"><a href="#cb14-10" aria-hidden="true" tabindex="-1"></a>      <span class="at">predikert =</span> <span class="fu">money</span>(predicted),</span>
-<span id="cb14-11"><a href="#cb14-11" aria-hidden="true" tabindex="-1"></a>      <span class="at">residual =</span> <span class="fu">money</span>(residual),</span>
-<span id="cb14-12"><a href="#cb14-12" aria-hidden="true" tabindex="-1"></a>      <span class="st">`</span><span class="at">relativ residual</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">pct</span>(pct_residual),</span>
-<span id="cb14-13"><a href="#cb14-13" aria-hidden="true" tabindex="-1"></a>      modellår <span class="ot">=</span> model_year,</span>
-<span id="cb14-14"><a href="#cb14-14" aria-hidden="true" tabindex="-1"></a>      <span class="at">km =</span> <span class="fu">comma</span>(km, <span class="at">big.mark =</span> <span class="st">" "</span>),</span>
-<span id="cb14-15"><a href="#cb14-15" aria-hidden="true" tabindex="-1"></a>      <span class="at">batteri =</span> <span class="fu">paste0</span>(battery_kwh_model, <span class="st">" kWh"</span>),</span>
-<span id="cb14-16"><a href="#cb14-16" aria-hidden="true" tabindex="-1"></a>      <span class="at">seter =</span> seats,</span>
-<span id="cb14-17"><a href="#cb14-17" aria-hidden="true" tabindex="-1"></a>      <span class="at">fylke =</span> county</span>
-<span id="cb14-18"><a href="#cb14-18" aria-hidden="true" tabindex="-1"></a>    ) <span class="sc">|&gt;</span></span>
-<span id="cb14-19"><a href="#cb14-19" aria-hidden="true" tabindex="-1"></a>    <span class="fu">kable</span>(<span class="at">escape =</span> <span class="cn">FALSE</span>)</span>
-<span id="cb14-20"><a href="#cb14-20" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>focus <span class="ot">&lt;-</span> modelled <span class="sc">|&gt;</span> <span class="fu">filter</span>(url_id <span class="sc">==</span> focus_id)</span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (<span class="fu">nrow</span>(focus) <span class="sc">==</span> <span class="dv">0</span>) {</span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cat</span>(<span class="st">"Annonsen finnes ikke i det gjeldende datasettet."</span>)</span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>} <span class="cf">else</span> {</span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>  focus <span class="sc">|&gt;</span></span>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a>    <span class="fu">transmute</span>(</span>
+<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a>      <span class="at">FINN =</span> <span class="fu">sprintf</span>(<span class="st">"&lt;a href='%s'&gt;%s&lt;/a&gt;"</span>, url, url_id),</span>
+<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a>      <span class="at">annonse =</span> <span class="fu">coalesce</span>(subtitle, description, title),</span>
+<span id="cb15-9"><a href="#cb15-9" aria-hidden="true" tabindex="-1"></a>      <span class="at">modell =</span> vehicle_model,</span>
+<span id="cb15-10"><a href="#cb15-10" aria-hidden="true" tabindex="-1"></a>      <span class="at">pris =</span> <span class="fu">money</span>(price),</span>
+<span id="cb15-11"><a href="#cb15-11" aria-hidden="true" tabindex="-1"></a>      <span class="at">predikert =</span> <span class="fu">money</span>(predicted),</span>
+<span id="cb15-12"><a href="#cb15-12" aria-hidden="true" tabindex="-1"></a>      <span class="at">residual =</span> <span class="fu">money</span>(residual),</span>
+<span id="cb15-13"><a href="#cb15-13" aria-hidden="true" tabindex="-1"></a>      <span class="st">`</span><span class="at">relativ residual</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">pct</span>(pct_residual),</span>
+<span id="cb15-14"><a href="#cb15-14" aria-hidden="true" tabindex="-1"></a>      modellår <span class="ot">=</span> model_year,</span>
+<span id="cb15-15"><a href="#cb15-15" aria-hidden="true" tabindex="-1"></a>      <span class="at">km =</span> <span class="fu">comma</span>(km, <span class="at">big.mark =</span> <span class="st">" "</span>),</span>
+<span id="cb15-16"><a href="#cb15-16" aria-hidden="true" tabindex="-1"></a>      <span class="at">batteri =</span> <span class="fu">paste0</span>(battery_kwh_model, <span class="st">" kWh"</span>),</span>
+<span id="cb15-17"><a href="#cb15-17" aria-hidden="true" tabindex="-1"></a>      <span class="at">seter =</span> seats,</span>
+<span id="cb15-18"><a href="#cb15-18" aria-hidden="true" tabindex="-1"></a>      <span class="at">fylke =</span> county</span>
+<span id="cb15-19"><a href="#cb15-19" aria-hidden="true" tabindex="-1"></a>    ) <span class="sc">|&gt;</span></span>
+<span id="cb15-20"><a href="#cb15-20" aria-hidden="true" tabindex="-1"></a>    <span class="fu">kable</span>(<span class="at">escape =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb15-21"><a href="#cb15-21" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 <div class="cell-output-display">
 <table class="caption-top table table-sm table-striped small">
 <colgroup>
-<col style="width: 40%">
+<col style="width: 35%">
+<col style="width: 7%">
+<col style="width: 11%">
+<col style="width: 5%">
+<col style="width: 5%">
+<col style="width: 5%">
 <col style="width: 8%">
-<col style="width: 6%">
-<col style="width: 6%">
-<col style="width: 5%">
-<col style="width: 10%">
-<col style="width: 5%">
-<col style="width: 4%">
 <col style="width: 4%">
 <col style="width: 3%">
-<col style="width: 5%">
+<col style="width: 4%">
+<col style="width: 3%">
+<col style="width: 4%">
 </colgroup>
 <thead>
 <tr class="header">
 <th style="text-align: left;">FINN</th>
 <th style="text-align: left;">annonse</th>
+<th style="text-align: left;">modell</th>
 <th style="text-align: left;">pris</th>
 <th style="text-align: left;">predikert</th>
 <th style="text-align: left;">residual</th>
@@ -921,10 +1314,11 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <tr class="odd">
 <td style="text-align: left;"><a href="https://www.finn.no/mobility/item/441656103">441656103</a></td>
 <td style="text-align: left;">75kWt L3 Shine</td>
+<td style="text-align: left;">Citroen ë-SpaceTourer</td>
 <td style="text-align: left;">374 434 kr</td>
-<td style="text-align: left;">370 413 kr</td>
-<td style="text-align: left;">4 021 kr</td>
-<td style="text-align: left;">1%</td>
+<td style="text-align: left;">318 653 kr</td>
+<td style="text-align: left;">55 781 kr</td>
+<td style="text-align: left;">18%</td>
 <td style="text-align: right;">2021</td>
 <td style="text-align: left;">44 000</td>
 <td style="text-align: left;">75 kWh</td>
@@ -938,7 +1332,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </section>
 <section id="begrensninger" class="level2">
 <h2 class="anchored" data-anchor-id="begrensninger">Begrensninger</h2>
-<p>Dette er et lite datasett med høy leverage i enkeltobservasjoner. Ingen spline er brukt, fordi seks relevante annonser ikke gir nok frihetsgrader til å estimere en kurve troverdig. Når flere annonser kommer inn, bør neste modellversjon teste splines for kilometerstand/alder og eventuelt trekke inn sammenlignbare Stellantis-søskenmodeller som Opel Zafira-e Life, Peugeot e-Traveller og Toyota Proace Verso Electric som et eksplisitt komparatormarked.</p>
+<p>Dette er fortsatt et lite datasett med høy leverage i enkeltobservasjoner. Ingen spline er brukt, fordi observasjonstallet fortsatt er for lavt til at en kurve for kilometerstand eller alder blir troverdig. Neste modellversjon bør teste lengdevariant og seter når parseren får nok variasjon og komplette felt.</p>
 </section>
 
 </main>

@@ -2,9 +2,11 @@
 
 Quarto/R analysis of Citroen ë-SpaceTourer listings on FINN.no.
 
-The current market is small. The scrape on 2026-05-14 found 6 relevant Citroen
-electric SpaceTourer listings, including FINN code `441656103`. The model is
-therefore a screening model for residuals, not a high-precision valuation model.
+The scrape on 2026-05-14 found 6 relevant Citroen electric SpaceTourer
+listings, including FINN code `441656103`. The regression is estimated on the
+broader Stellantis sibling market: Citroen ë-SpaceTourer, Opel Zafira-e Life,
+Peugeot e-Traveller, and Toyota Proace Verso Electric. Citroen listings are then
+ranked separately by residual.
 
 ## Run
 
@@ -20,6 +22,7 @@ touch docs/.nojekyll
 Outputs:
 
 - `data/processed/spacetourer_listings.csv`
+- `data/processed/stellantis_sibling_market.csv`
 - `data/processed/spacetourer_relevant.csv`
 - `data/processed/spacetourer_ranked_relevant.csv`
 - `docs/index.html`

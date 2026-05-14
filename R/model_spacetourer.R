@@ -3,10 +3,9 @@ library(broom)
 
 analysis_date <- as.Date("2026-05-14")
 
-prepare_model_data <- function(listings, include_comparators = FALSE) {
+prepare_model_data <- function(listings) {
   data <- listings |>
-    filter(!is.na(price), !is.na(km), !is.na(model_year), !is.na(seats), is_electric) |>
-    filter(relevant | (include_comparators & str_to_lower(brand) %in% c("opel", "peugeot", "toyota"))) |>
+    filter(model_sample, !is.na(price), !is.na(km), !is.na(model_year), !is.na(seats), is_electric) |>
     mutate(
       ad_age_years = pmax(as.numeric(format(analysis_date, "%Y")) - model_year, 0),
       log_km = log1p(km),
@@ -15,9 +14,10 @@ prepare_model_data <- function(listings, include_comparators = FALSE) {
       battery_75 = battery_kwh_model >= 70,
       seats = as.integer(seats),
       county = replace_na(county, "Ukjent"),
-      length_variant = replace_na(length_variant, "Ukjent")
+      length_variant = replace_na(length_variant, "Ukjent"),
+      vehicle_model = fct_lump_min(factor(vehicle_model), min = 2, other_level = "Annen søskenmodell")
     ) |>
-    drop_na(price, log_price, ad_age_years, log_km, battery_kwh_model)
+    drop_na(price, log_price, ad_age_years, log_km, battery_kwh_model, vehicle_model)
 
   data
 }
@@ -25,7 +25,8 @@ prepare_model_data <- function(listings, include_comparators = FALSE) {
 fit_candidate_models <- function(model_data) {
   list(
     age_km = lm(log_price ~ ad_age_years + log_km, data = model_data),
-    age_km_battery = lm(log_price ~ ad_age_years + log_km + battery_75, data = model_data)
+    age_km_battery = lm(log_price ~ ad_age_years + log_km + battery_75, data = model_data),
+    age_km_battery_model = lm(log_price ~ ad_age_years + log_km + battery_75 + vehicle_model, data = model_data)
   )
 }
 
@@ -60,8 +61,12 @@ loocv_for_formula <- function(formula, model_data) {
 
 compare_models <- function(model_data) {
   tibble(
-    model = c("age_km", "age_km_battery"),
-    formula = list(log_price ~ ad_age_years + log_km, log_price ~ ad_age_years + log_km + battery_75)
+    model = c("age_km", "age_km_battery", "age_km_battery_model"),
+    formula = list(
+      log_price ~ ad_age_years + log_km,
+      log_price ~ ad_age_years + log_km + battery_75,
+      log_price ~ ad_age_years + log_km + battery_75 + vehicle_model
+    )
   ) |>
     mutate(
       fit = map(formula, lm, data = model_data),

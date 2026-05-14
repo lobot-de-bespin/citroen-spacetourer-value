@@ -29,6 +29,7 @@ focus_id <- stringr::str_extract(params$focus_url, "[0-9]+$")
 ```{r}
 listings <- readr::read_csv("data/processed/spacetourer_listings.csv", show_col_types = FALSE)
 relevant <- listings |> filter(relevant)
+market <- listings |> filter(model_sample)
 model_data <- prepare_model_data(listings)
 comparisons <- compare_models(model_data)
 selected_model <- comparisons |>
@@ -44,29 +45,45 @@ readr::write_csv(ranked, "data/processed/spacetourer_ranked_relevant.csv")
 
 ## Kortversjon
 
-Markedet er tynt: analysen fant `r nrow(relevant)` relevante Citroen ë-SpaceTourer-annonser på FINN i dag. Derfor er modellen først og fremst et screeningverktøy, ikke en presis verdsettelsesmotor. Jeg har brukt en enkel log-prismodell med alder, kilometerstand og eventuelt 75 kWh-batteri, valgt etter leave-one-out-feil.
+Analysen fant `r nrow(relevant)` relevante Citroen ë-SpaceTourer-annonser på FINN i dag. For å få en mer stabil regresjon er modellen estimert på et bredere Stellantis-søskenmarked med `r nrow(model_data)` elektriske personbil-/flerbruksbilannonser: Citroen ë-SpaceTourer, Opel Zafira-e Life, Peugeot e-Traveller og Toyota Proace Verso Electric.
+
+Jeg har brukt en log-prismodell med alder, kilometerstand, batteri og eventuelt bilmodell som kandidatvariabler, valgt etter leave-one-out-feil. Citroen-annonsene rangeres deretter separat på residual.
 
 Negativ residual betyr at annonsert pris er lavere enn modellen forventer. De mest interessante annonsene ligger derfor øverst i residualtabellen.
 
 ## Modellfakta som styrer variablene
 
-ë-SpaceTourer er en elektrisk flerbruksbil/persontransportør på Stellantis-plattformen. Den finnes i flere lengder, blant annet M/L2 og XL/L3, med opptil 8-9 seter. Bruktmarkedet på FINN akkurat nå domineres av XL/L3 og forhjulsdrift. Batteri er en viktig variabel: 50 kWh-bilene har lavere WLTP-rekkevidde enn 75 kWh-bilene, mens nyere 75 kWh-biler typisk prises høyere.
+ë-SpaceTourer er en elektrisk flerbruksbil/persontransportør på Stellantis-plattformen. Søskenmodellene Opel Zafira-e Life, Peugeot e-Traveller og Toyota Proace Verso Electric deler i stor grad samme praktiske pakke og batterivalg, og er derfor nyttige observasjoner for bruktprismodellen. Modellnavn tas med som egen kandidatvariabel slik at systematiske prisforskjeller mellom merkene ikke blandes sammen med alder, kilometerstand og batteri.
+
+Bilene finnes i flere lengder, blant annet M/L2 og XL/L3, med opptil 8-9 seter. Bruktmarkedet på FINN akkurat nå domineres av XL/L3 og forhjulsdrift. Batteri er en viktig variabel: 50 kWh-bilene har lavere WLTP-rekkevidde enn 75 kWh-bilene, mens nyere 75 kWh-biler typisk prises høyere.
 
 Relevante modellvariabler i dette datagrunnlaget:
 
 - `model_year` / alder: fanger modellår, facelift/nybilnærhet og garanti.
 - `km`: bruktgrad, modellert som `log1p(km)`.
 - `battery_kwh` / `battery_75`: skiller særlig 50 kWh fra 75 kWh.
+- `vehicle_model`: Citroen, Opel, Peugeot eller Toyota.
 - `seats`: 6, 8 eller 9 seter; beholdes i rapporten, men ikke i hovedmodellen fordi n er for liten.
-- `length_variant`: M/L2 vs XL/L3; alle relevante biler her er parsable som XL/L3, så variabelen kan ikke forklare prisforskjeller i dagens datasett.
+- `length_variant`: M/L2 vs XL/L3; beholdes i rapporten, men brukes ikke i hovedmodellen før den er mer komplett og variert.
 - `county`: brukes i markedskartet, ikke som prisvariabel.
 
 ## Datagrunnlag
+
+Modellgrunnlaget:
+
+```{r}
+market |>
+  count(vehicle_model, sort = TRUE) |>
+  kable()
+```
+
+Citroen-annonsene som rangeres:
 
 ```{r}
 relevant |>
   transmute(
     FINN = sprintf("<a href='%s'>%s</a>", url, url_id),
+    modell = vehicle_model,
     pris = money(price),
     modellår = model_year,
     km = comma(km, big.mark = " "),
@@ -81,20 +98,20 @@ relevant |>
 
 ```{r}
 relevant |>
-  count(model_year, battery_kwh, seats, length_variant, county, sort = TRUE) |>
+  count(vehicle_model, model_year, battery_kwh, seats, length_variant, county, sort = TRUE) |>
   kable()
 ```
 
 ## Markedskart
 
 ```{r}
-ggplot(relevant, aes(km, price, color = county)) +
-  geom_point(aes(size = battery_kwh), alpha = 0.85) +
-  geom_text(aes(label = url_id), nudge_y = 17000, size = 3, show.legend = FALSE) +
+ggplot(market, aes(km, price, color = county)) +
+  geom_point(aes(size = battery_kwh, shape = vehicle_model), alpha = 0.85) +
+  geom_text(data = relevant, aes(label = url_id), nudge_y = 17000, size = 3, show.legend = FALSE) +
   scale_x_continuous(labels = label_number(big.mark = " ", suffix = " km")) +
   scale_y_continuous(labels = money) +
   scale_size_continuous(name = "Batteri kWh", range = c(2.5, 5), breaks = c(50, 75)) +
-  labs(x = "Kilometerstand", y = "Pris", color = "Fylke") +
+  labs(x = "Kilometerstand", y = "Pris", color = "Fylke", shape = "Bilmodell") +
   theme_minimal()
 ```
 
@@ -139,23 +156,23 @@ bind_cols(metrics, comparisons |> filter(model == selected_model)) |>
 
 ```{r}
 ggplot(modelled, aes(predicted, price)) +
-  geom_point(aes(color = county), size = 3, alpha = 0.85) +
+  geom_point(aes(color = county, shape = vehicle_model), size = 3, alpha = 0.85) +
   geom_abline(slope = 1, intercept = 0, linetype = "dashed", color = "#D55E00") +
   geom_text(aes(label = url_id), nudge_y = 12000, size = 3, show.legend = FALSE) +
   scale_x_continuous(labels = money) +
   scale_y_continuous(labels = money) +
-  labs(x = "Modellert pris", y = "Annonsert pris", color = "Fylke") +
+  labs(x = "Modellert pris", y = "Annonsert pris", color = "Fylke", shape = "Bilmodell") +
   theme_minimal()
 ```
 
 ```{r}
 ggplot(modelled, aes(predicted, residual)) +
   geom_hline(yintercept = 0, linetype = "dashed", color = "#D55E00") +
-  geom_point(aes(color = county), size = 3, alpha = 0.85) +
+  geom_point(aes(color = county, shape = vehicle_model), size = 3, alpha = 0.85) +
   geom_text(aes(label = url_id), nudge_y = 12000, size = 3, show.legend = FALSE) +
   scale_x_continuous(labels = money) +
   scale_y_continuous(labels = money) +
-  labs(x = "Modellert pris", y = "Residual: annonsert minus modellert", color = "Fylke") +
+  labs(x = "Modellert pris", y = "Residual: annonsert minus modellert", color = "Fylke", shape = "Bilmodell") +
   theme_minimal()
 ```
 
@@ -173,6 +190,7 @@ modelled |>
   arrange(desc(cooks_d)) |>
   transmute(
     FINN = sprintf("<a href='%s'>%s</a>", url, url_id),
+    modell = vehicle_model,
     pris = money(price),
     predikert = money(predicted),
     residual = money(residual),
@@ -191,6 +209,7 @@ ranked |>
     rang = row_number(),
     FINN = sprintf("<a href='%s'>%s</a>", url, url_id),
     annonse = coalesce(subtitle, description, title),
+    modell = vehicle_model,
     pris = money(price),
     predikert = money(predicted),
     residual = money(residual),
@@ -215,6 +234,7 @@ if (nrow(focus) == 0) {
     transmute(
       FINN = sprintf("<a href='%s'>%s</a>", url, url_id),
       annonse = coalesce(subtitle, description, title),
+      modell = vehicle_model,
       pris = money(price),
       predikert = money(predicted),
       residual = money(residual),
@@ -231,4 +251,4 @@ if (nrow(focus) == 0) {
 
 ## Begrensninger
 
-Dette er et lite datasett med høy leverage i enkeltobservasjoner. Ingen spline er brukt, fordi seks relevante annonser ikke gir nok frihetsgrader til å estimere en kurve troverdig. Når flere annonser kommer inn, bør neste modellversjon teste splines for kilometerstand/alder og eventuelt trekke inn sammenlignbare Stellantis-søskenmodeller som Opel Zafira-e Life, Peugeot e-Traveller og Toyota Proace Verso Electric som et eksplisitt komparatormarked.
+Dette er fortsatt et lite datasett med høy leverage i enkeltobservasjoner. Ingen spline er brukt, fordi observasjonstallet fortsatt er for lavt til at en kurve for kilometerstand eller alder blir troverdig. Neste modellversjon bør teste lengdevariant og seter når parseren får nok variasjon og komplette felt.
