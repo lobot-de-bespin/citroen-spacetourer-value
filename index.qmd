@@ -1,5 +1,5 @@
 ---
-title: "Citroen ë-SpaceTourer pristapsmodell"
+title: "Stellantis elektrisk flerbruksbil: pristapsmodell"
 author: "Lobot"
 date: today
 params:
@@ -28,7 +28,6 @@ focus_id <- stringr::str_extract(params$focus_url, "[0-9]+$")
 
 ```{r}
 listings <- readr::read_csv("data/processed/spacetourer_listings.csv", show_col_types = FALSE)
-relevant <- listings |> filter(relevant)
 market <- listings |> filter(model_sample)
 model_data <- prepare_model_data(listings)
 comparisons <- compare_models(model_data)
@@ -39,21 +38,23 @@ selected_model <- comparisons |>
 fit <- fit_candidate_models(model_data)[[selected_model]]
 modelled <- augment_model(fit, model_data)
 metrics <- model_metrics(modelled, fit)
-ranked <- modelled |> filter(relevant) |> arrange(desc(depreciation_residual))
-readr::write_csv(ranked, "data/processed/spacetourer_ranked_relevant.csv")
+ranked <- modelled |> arrange(desc(depreciation_residual))
+citroen_ranked <- ranked |> filter(vehicle_model == "Citroen ë-SpaceTourer")
+readr::write_csv(ranked, "data/processed/stellantis_ranked_candidates.csv")
+readr::write_csv(citroen_ranked, "data/processed/spacetourer_ranked_relevant.csv")
 ```
 
 ## Kortversjon
 
-Analysen fant `r nrow(relevant)` relevante Citroen ë-SpaceTourer-annonser på FINN i dag. For hver annonse estimeres først nypris fra dagens norske prislistesider/konfiguratorer. Deretter beregnes `pristap = estimert nypris - bruktpris`.
+Analysen behandler de elektriske Stellantis-søskenmodellene som ett aktuelt marked: Citroen ë-SpaceTourer, Opel Zafira-e Life, Peugeot e-Traveller og Toyota Proace Verso Electric. Den fant `r nrow(model_data)` aktuelle annonser på FINN i dag. For hver annonse estimeres først nypris fra dagens norske prislistesider/konfiguratorer. Deretter beregnes `pristap = estimert nypris - bruktpris`.
 
-Pristapsmodellen estimeres på et bredere Stellantis-søskenmarked med `r nrow(model_data)` elektriske personbil-/flerbruksbilannonser: Citroen ë-SpaceTourer, Opel Zafira-e Life, Peugeot e-Traveller og Toyota Proace Verso Electric. Kandidatmodellene bruker alder, kilometerstand, estimert nypris, batteri og bilmodell, valgt etter leave-one-out-feil.
+Kandidatmodellene bruker alder, kilometerstand, estimert nypris, batteri og bilmodell, valgt etter leave-one-out-feil.
 
 Positiv pristapsresidual betyr at bilen har større pristap enn modellen forventer, altså lavere bruktpris enn forventet gitt nypris, alder og km. De mest interessante annonsene ligger derfor øverst i residualtabellen.
 
 ## Modellfakta som styrer variablene
 
-ë-SpaceTourer er en elektrisk flerbruksbil/persontransportør på Stellantis-plattformen. Søskenmodellene Opel Zafira-e Life, Peugeot e-Traveller og Toyota Proace Verso Electric deler i stor grad samme praktiske pakke og batterivalg, og er derfor nyttige observasjoner for pristapsmodellen. Modellnavn tas med som egen kandidatvariabel slik at systematiske prisforskjeller mellom merkene ikke blandes sammen med alder, kilometerstand og batteri.
+Citroen ë-SpaceTourer, Opel Zafira-e Life, Peugeot e-Traveller og Toyota Proace Verso Electric er elektriske flerbruksbiler/persontransportører på samme Stellantis-plattform. De deler i stor grad praktisk pakke, batterivalg og drivlinje, og er derfor rimelige alternativer i samme kjøpsvurdering. Modellnavn tas med som egen kandidatvariabel slik at systematiske prisforskjeller mellom merkene ikke blandes sammen med alder, kilometerstand og batteri.
 
 Bilene finnes i flere lengder, blant annet M/L2 og XL/L3, med opptil 8-9 seter. Bruktmarkedet på FINN akkurat nå domineres av XL/L3 og forhjulsdrift. Batteri er en viktig variabel: 50 kWh-bilene har lavere WLTP-rekkevidde enn 75 kWh-bilene, mens nyere 75 kWh-biler typisk prises høyere.
 
@@ -90,11 +91,10 @@ market |>
   kable()
 ```
 
-Citroen-annonsene som rangeres:
+Aktuelle kandidater:
 
 ```{r}
 model_data |>
-  filter(relevant) |>
   transmute(
     FINN = sprintf("<a href='%s'>%s</a>", url, url_id),
     modell = vehicle_model,
@@ -115,7 +115,7 @@ model_data |>
 ```
 
 ```{r}
-relevant |>
+model_data |>
   count(vehicle_model, model_year, battery_kwh, seats, length_variant, county, sort = TRUE) |>
   kable()
 ```
@@ -125,7 +125,7 @@ relevant |>
 ```{r}
 ggplot(market, aes(km, price, color = county)) +
   geom_point(aes(size = battery_kwh, shape = vehicle_model), alpha = 0.85) +
-  geom_text(data = relevant, aes(label = url_id), nudge_y = 17000, size = 3, show.legend = FALSE) +
+  geom_text(data = model_data, aes(label = url_id), nudge_y = 17000, size = 2.5, show.legend = FALSE, check_overlap = TRUE) +
   scale_x_continuous(labels = label_number(big.mark = " ", suffix = " km")) +
   scale_y_continuous(labels = money) +
   scale_size_continuous(name = "Batteri kWh", range = c(2.5, 5), breaks = c(50, 75)) +
@@ -136,7 +136,7 @@ ggplot(market, aes(km, price, color = county)) +
 ```{r}
 ggplot(model_data, aes(ad_age_years, depreciation, color = vehicle_model)) +
   geom_point(aes(size = km), alpha = 0.8) +
-  geom_text(data = model_data |> filter(relevant), aes(label = url_id), nudge_y = 16000, size = 3, show.legend = FALSE) +
+  geom_text(aes(label = url_id), nudge_y = 16000, size = 2.5, show.legend = FALSE, check_overlap = TRUE) +
   scale_y_continuous(labels = money) +
   scale_size_continuous(labels = label_number(big.mark = " "), guide = "none") +
   labs(x = "Alder (år fra modellår)", y = "Pristap", color = "Bilmodell") +
@@ -231,7 +231,7 @@ modelled |>
   kable(escape = FALSE)
 ```
 
-## Mest underpriset
+## Mest gunstige kandidater
 
 ```{r}
 ranked |>

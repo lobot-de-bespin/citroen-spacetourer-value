@@ -1,14 +1,14 @@
-# Citroen ë-SpaceTourer FINN depreciation model
+# Stellantis electric MPV FINN depreciation model
 
-Quarto/R analysis of Citroen ë-SpaceTourer listings on FINN.no.
+Quarto/R analysis of electric Stellantis MPV listings on FINN.no:
+Citroen ë-SpaceTourer, Opel Zafira-e Life, Peugeot e-Traveller, and Toyota
+Proace Verso Electric.
 
-The scrape on 2026-05-14 found 6 relevant Citroen electric SpaceTourer
-listings, including FINN code `441656103`. The report estimates current new-car
-price for each listing from Norwegian 2026 price lists/configurators, computes
-`depreciation = estimated_new_price - used_price`, then models depreciation on
-the broader Stellantis sibling market: Citroen ë-SpaceTourer, Opel Zafira-e
-Life, Peugeot e-Traveller, and Toyota Proace Verso Electric. Citroen listings
-are ranked separately by depreciation residual.
+The scrape on 2026-05-14 found 32 current candidate listings, including FINN
+code `441656103`. The report estimates current new-car price for each listing
+from Norwegian 2026 price lists/configurators, computes
+`depreciation = estimated_new_price - used_price`, then ranks all candidates by
+depreciation residual.
 
 ## Run
 
@@ -25,6 +25,7 @@ Outputs:
 
 - `data/processed/spacetourer_listings.csv`
 - `data/processed/stellantis_sibling_market.csv`
+- `data/processed/stellantis_ranked_candidates.csv`
 - `data/processed/spacetourer_relevant.csv`
 - `data/processed/spacetourer_ranked_relevant.csv`
 - `data/raw/new_price_sources/`

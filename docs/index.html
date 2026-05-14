@@ -9,7 +9,7 @@
 <meta name="author" content="Lobot">
 <meta name="dcterms.date" content="2026-05-14">
 
-<title>Citroen ë-SpaceTourer pristapsmodell</title>
+<title>Stellantis elektrisk flerbruksbil: pristapsmodell</title>
 <style>
 /* Default styles provided by pandoc.
 ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
@@ -92,7 +92,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <li><a href="#markedskart" id="toc-markedskart" class="nav-link" data-scroll-target="#markedskart">Markedskart</a></li>
   <li><a href="#modellvalg" id="toc-modellvalg" class="nav-link" data-scroll-target="#modellvalg">Modellvalg</a></li>
   <li><a href="#diagnostikk" id="toc-diagnostikk" class="nav-link" data-scroll-target="#diagnostikk">Diagnostikk</a></li>
-  <li><a href="#mest-underpriset" id="toc-mest-underpriset" class="nav-link" data-scroll-target="#mest-underpriset">Mest underpriset</a></li>
+  <li><a href="#mest-gunstige-kandidater" id="toc-mest-gunstige-kandidater" class="nav-link" data-scroll-target="#mest-gunstige-kandidater">Mest gunstige kandidater</a></li>
   <li><a href="#valgt-annonse" id="toc-valgt-annonse" class="nav-link" data-scroll-target="#valgt-annonse">Valgt annonse</a></li>
   <li><a href="#begrensninger" id="toc-begrensninger" class="nav-link" data-scroll-target="#begrensninger">Begrensninger</a></li>
   </ul>
@@ -102,7 +102,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">Citroen ë-SpaceTourer pristapsmodell</h1>
+<h1 class="title">Stellantis elektrisk flerbruksbil: pristapsmodell</h1>
 </div>
 
 
@@ -149,30 +149,31 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <details class="code-fold">
 <summary>Code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>listings <span class="ot">&lt;-</span> readr<span class="sc">::</span><span class="fu">read_csv</span>(<span class="st">"data/processed/spacetourer_listings.csv"</span>, <span class="at">show_col_types =</span> <span class="cn">FALSE</span>)</span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>relevant <span class="ot">&lt;-</span> listings <span class="sc">|&gt;</span> <span class="fu">filter</span>(relevant)</span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>market <span class="ot">&lt;-</span> listings <span class="sc">|&gt;</span> <span class="fu">filter</span>(model_sample)</span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>model_data <span class="ot">&lt;-</span> <span class="fu">prepare_model_data</span>(listings)</span>
-<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>comparisons <span class="ot">&lt;-</span> <span class="fu">compare_models</span>(model_data)</span>
-<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>selected_model <span class="ot">&lt;-</span> comparisons <span class="sc">|&gt;</span></span>
-<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(loocv_mae, glance_AIC) <span class="sc">|&gt;</span></span>
-<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">slice</span>(<span class="dv">1</span>) <span class="sc">|&gt;</span></span>
-<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pull</span>(model)</span>
-<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>fit <span class="ot">&lt;-</span> <span class="fu">fit_candidate_models</span>(model_data)[[selected_model]]</span>
-<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>modelled <span class="ot">&lt;-</span> <span class="fu">augment_model</span>(fit, model_data)</span>
-<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>metrics <span class="ot">&lt;-</span> <span class="fu">model_metrics</span>(modelled, fit)</span>
-<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>ranked <span class="ot">&lt;-</span> modelled <span class="sc">|&gt;</span> <span class="fu">filter</span>(relevant) <span class="sc">|&gt;</span> <span class="fu">arrange</span>(<span class="fu">desc</span>(depreciation_residual))</span>
-<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>readr<span class="sc">::</span><span class="fu">write_csv</span>(ranked, <span class="st">"data/processed/spacetourer_ranked_relevant.csv"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>market <span class="ot">&lt;-</span> listings <span class="sc">|&gt;</span> <span class="fu">filter</span>(model_sample)</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>model_data <span class="ot">&lt;-</span> <span class="fu">prepare_model_data</span>(listings)</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>comparisons <span class="ot">&lt;-</span> <span class="fu">compare_models</span>(model_data)</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>selected_model <span class="ot">&lt;-</span> comparisons <span class="sc">|&gt;</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(loocv_mae, glance_AIC) <span class="sc">|&gt;</span></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">slice</span>(<span class="dv">1</span>) <span class="sc">|&gt;</span></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pull</span>(model)</span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>fit <span class="ot">&lt;-</span> <span class="fu">fit_candidate_models</span>(model_data)[[selected_model]]</span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>modelled <span class="ot">&lt;-</span> <span class="fu">augment_model</span>(fit, model_data)</span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>metrics <span class="ot">&lt;-</span> <span class="fu">model_metrics</span>(modelled, fit)</span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>ranked <span class="ot">&lt;-</span> modelled <span class="sc">|&gt;</span> <span class="fu">arrange</span>(<span class="fu">desc</span>(depreciation_residual))</span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>citroen_ranked <span class="ot">&lt;-</span> ranked <span class="sc">|&gt;</span> <span class="fu">filter</span>(vehicle_model <span class="sc">==</span> <span class="st">"Citroen ë-SpaceTourer"</span>)</span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>readr<span class="sc">::</span><span class="fu">write_csv</span>(ranked, <span class="st">"data/processed/stellantis_ranked_candidates.csv"</span>)</span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>readr<span class="sc">::</span><span class="fu">write_csv</span>(citroen_ranked, <span class="st">"data/processed/spacetourer_ranked_relevant.csv"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 </div>
 <section id="kortversjon" class="level2">
 <h2 class="anchored" data-anchor-id="kortversjon">Kortversjon</h2>
-<p>Analysen fant 6 relevante Citroen ë-SpaceTourer-annonser på FINN i dag. For hver annonse estimeres først nypris fra dagens norske prislistesider/konfiguratorer. Deretter beregnes <code>pristap = estimert nypris - bruktpris</code>.</p>
-<p>Pristapsmodellen estimeres på et bredere Stellantis-søskenmarked med 32 elektriske personbil-/flerbruksbilannonser: Citroen ë-SpaceTourer, Opel Zafira-e Life, Peugeot e-Traveller og Toyota Proace Verso Electric. Kandidatmodellene bruker alder, kilometerstand, estimert nypris, batteri og bilmodell, valgt etter leave-one-out-feil.</p>
+<p>Analysen behandler de elektriske Stellantis-søskenmodellene som ett aktuelt marked: Citroen ë-SpaceTourer, Opel Zafira-e Life, Peugeot e-Traveller og Toyota Proace Verso Electric. Den fant 32 aktuelle annonser på FINN i dag. For hver annonse estimeres først nypris fra dagens norske prislistesider/konfiguratorer. Deretter beregnes <code>pristap = estimert nypris - bruktpris</code>.</p>
+<p>Kandidatmodellene bruker alder, kilometerstand, estimert nypris, batteri og bilmodell, valgt etter leave-one-out-feil.</p>
 <p>Positiv pristapsresidual betyr at bilen har større pristap enn modellen forventer, altså lavere bruktpris enn forventet gitt nypris, alder og km. De mest interessante annonsene ligger derfor øverst i residualtabellen.</p>
 </section>
 <section id="modellfakta-som-styrer-variablene" class="level2">
 <h2 class="anchored" data-anchor-id="modellfakta-som-styrer-variablene">Modellfakta som styrer variablene</h2>
-<p>ë-SpaceTourer er en elektrisk flerbruksbil/persontransportør på Stellantis-plattformen. Søskenmodellene Opel Zafira-e Life, Peugeot e-Traveller og Toyota Proace Verso Electric deler i stor grad samme praktiske pakke og batterivalg, og er derfor nyttige observasjoner for pristapsmodellen. Modellnavn tas med som egen kandidatvariabel slik at systematiske prisforskjeller mellom merkene ikke blandes sammen med alder, kilometerstand og batteri.</p>
+<p>Citroen ë-SpaceTourer, Opel Zafira-e Life, Peugeot e-Traveller og Toyota Proace Verso Electric er elektriske flerbruksbiler/persontransportører på samme Stellantis-plattform. De deler i stor grad praktisk pakke, batterivalg og drivlinje, og er derfor rimelige alternativer i samme kjøpsvurdering. Modellnavn tas med som egen kandidatvariabel slik at systematiske prisforskjeller mellom merkene ikke blandes sammen med alder, kilometerstand og batteri.</p>
 <p>Bilene finnes i flere lengder, blant annet M/L2 og XL/L3, med opptil 8-9 seter. Bruktmarkedet på FINN akkurat nå domineres av XL/L3 og forhjulsdrift. Batteri er en viktig variabel: 50 kWh-bilene har lavere WLTP-rekkevidde enn 75 kWh-bilene, mens nyere 75 kWh-biler typisk prises høyere.</p>
 <p>Relevante modellvariabler i dette datagrunnlaget:</p>
 <ul>
@@ -276,47 +277,46 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </table>
 </div>
 </div>
-<p>Citroen-annonsene som rangeres:</p>
+<p>Aktuelle kandidater:</p>
 <div class="cell">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>model_data <span class="sc">|&gt;</span></span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(relevant) <span class="sc">|&gt;</span></span>
-<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">transmute</span>(</span>
-<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">FINN =</span> <span class="fu">sprintf</span>(<span class="st">"&lt;a href='%s'&gt;%s&lt;/a&gt;"</span>, url, url_id),</span>
-<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">modell =</span> vehicle_model,</span>
-<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">pris =</span> <span class="fu">money</span>(price),</span>
-<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">estimert_nypris =</span> <span class="fu">money</span>(estimated_new_price),</span>
-<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">pristap =</span> <span class="fu">money</span>(depreciation),</span>
-<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>    <span class="st">`</span><span class="at">pristap %</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">pct</span>(depreciation_pct),</span>
-<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">nyprisgrunnlag =</span> msrp_variant,</span>
-<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>    modellår <span class="ot">=</span> model_year,</span>
-<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>    <span class="at">km =</span> <span class="fu">comma</span>(km, <span class="at">big.mark =</span> <span class="st">" "</span>),</span>
-<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a>    <span class="at">batteri =</span> <span class="fu">if_else</span>(<span class="fu">is.na</span>(battery_kwh), <span class="cn">NA_character_</span>, <span class="fu">paste0</span>(battery_kwh, <span class="st">" kWh"</span>)),</span>
-<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a>    <span class="at">WLTP =</span> <span class="fu">if_else</span>(<span class="fu">is.na</span>(range_wltp_km), <span class="cn">NA_character_</span>, <span class="fu">paste0</span>(range_wltp_km, <span class="st">" km"</span>)),</span>
-<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a>    <span class="at">seter =</span> seats,</span>
-<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a>    <span class="at">lengde =</span> length_variant,</span>
-<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a>    <span class="at">fylke =</span> county</span>
-<span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span></span>
-<span id="cb5-19"><a href="#cb5-19" aria-hidden="true" tabindex="-1"></a>  <span class="fu">kable</span>(<span class="at">escape =</span> <span class="cn">FALSE</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">transmute</span>(</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">FINN =</span> <span class="fu">sprintf</span>(<span class="st">"&lt;a href='%s'&gt;%s&lt;/a&gt;"</span>, url, url_id),</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">modell =</span> vehicle_model,</span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">pris =</span> <span class="fu">money</span>(price),</span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">estimert_nypris =</span> <span class="fu">money</span>(estimated_new_price),</span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">pristap =</span> <span class="fu">money</span>(depreciation),</span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>    <span class="st">`</span><span class="at">pristap %</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">pct</span>(depreciation_pct),</span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">nyprisgrunnlag =</span> msrp_variant,</span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>    modellår <span class="ot">=</span> model_year,</span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>    <span class="at">km =</span> <span class="fu">comma</span>(km, <span class="at">big.mark =</span> <span class="st">" "</span>),</span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>    <span class="at">batteri =</span> <span class="fu">if_else</span>(<span class="fu">is.na</span>(battery_kwh), <span class="cn">NA_character_</span>, <span class="fu">paste0</span>(battery_kwh, <span class="st">" kWh"</span>)),</span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a>    <span class="at">WLTP =</span> <span class="fu">if_else</span>(<span class="fu">is.na</span>(range_wltp_km), <span class="cn">NA_character_</span>, <span class="fu">paste0</span>(range_wltp_km, <span class="st">" km"</span>)),</span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a>    <span class="at">seter =</span> seats,</span>
+<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a>    <span class="at">lengde =</span> length_variant,</span>
+<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a>    <span class="at">fylke =</span> county</span>
+<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span></span>
+<span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">kable</span>(<span class="at">escape =</span> <span class="cn">FALSE</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 <div class="cell-output-display">
 <table class="caption-top table table-sm table-striped small">
 <colgroup>
-<col style="width: 33%">
-<col style="width: 10%">
-<col style="width: 5%">
-<col style="width: 7%">
-<col style="width: 5%">
+<col style="width: 26%">
+<col style="width: 11%">
 <col style="width: 4%">
-<col style="width: 7%">
+<col style="width: 6%">
 <col style="width: 4%">
+<col style="width: 3%">
+<col style="width: 15%">
 <col style="width: 3%">
 <col style="width: 3%">
 <col style="width: 3%">
 <col style="width: 2%">
-<col style="width: 3%">
-<col style="width: 4%">
+<col style="width: 2%">
+<col style="width: 2%">
+<col style="width: 9%">
 </colgroup>
 <thead>
 <tr class="header">
@@ -433,6 +433,422 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <td style="text-align: left;">XL/L3</td>
 <td style="text-align: left;">Oslo</td>
 </tr>
+<tr class="odd">
+<td style="text-align: left;"><a href="https://www.finn.no/mobility/item/460486066">460486066</a></td>
+<td style="text-align: left;">Opel Zafira-e Life</td>
+<td style="text-align: left;">357 000 kr</td>
+<td style="text-align: left;">741 226 kr</td>
+<td style="text-align: left;">384 226 kr</td>
+<td style="text-align: left;">52%</td>
+<td style="text-align: left;">GS L2 75 kWh</td>
+<td style="text-align: right;">2022</td>
+<td style="text-align: left;">30 000</td>
+<td style="text-align: left;">75 kWh</td>
+<td style="text-align: left;">306 km</td>
+<td style="text-align: right;">6</td>
+<td style="text-align: left;">M/L2</td>
+<td style="text-align: left;">Akershus</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><a href="https://www.finn.no/mobility/item/433519464">433519464</a></td>
+<td style="text-align: left;">Opel Zafira-e Life</td>
+<td style="text-align: left;">239 000 kr</td>
+<td style="text-align: left;">719 900 kr</td>
+<td style="text-align: left;">480 900 kr</td>
+<td style="text-align: left;">67%</td>
+<td style="text-align: left;">GS L2 75 kWh</td>
+<td style="text-align: right;">2021</td>
+<td style="text-align: left;">99 000</td>
+<td style="text-align: left;">50 kWh</td>
+<td style="text-align: left;">212 km</td>
+<td style="text-align: right;">9</td>
+<td style="text-align: left;">Ukjent</td>
+<td style="text-align: left;">Innlandet</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><a href="https://www.finn.no/mobility/item/462768464">462768464</a></td>
+<td style="text-align: left;">Opel Zafira-e Life</td>
+<td style="text-align: left;">279 000 kr</td>
+<td style="text-align: left;">734 900 kr</td>
+<td style="text-align: left;">455 900 kr</td>
+<td style="text-align: left;">62%</td>
+<td style="text-align: left;">GS L2 75 kWh</td>
+<td style="text-align: right;">2021</td>
+<td style="text-align: left;">80 000</td>
+<td style="text-align: left;">46 kWh</td>
+<td style="text-align: left;">207 km</td>
+<td style="text-align: right;">8</td>
+<td style="text-align: left;">Ukjent</td>
+<td style="text-align: left;">Ukjent</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><a href="https://www.finn.no/mobility/item/461006616">461006616</a></td>
+<td style="text-align: left;">Opel Zafira-e Life</td>
+<td style="text-align: left;">299 900 kr</td>
+<td style="text-align: left;">749 900 kr</td>
+<td style="text-align: left;">450 000 kr</td>
+<td style="text-align: left;">60%</td>
+<td style="text-align: left;">GS L3 75 kWh</td>
+<td style="text-align: right;">2023</td>
+<td style="text-align: left;">153 444</td>
+<td style="text-align: left;">75 kWh</td>
+<td style="text-align: left;">311 km</td>
+<td style="text-align: right;">8</td>
+<td style="text-align: left;">XL/L3</td>
+<td style="text-align: left;">Trøndelag/Nordland</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><a href="https://www.finn.no/mobility/item/459060409">459060409</a></td>
+<td style="text-align: left;">Opel Zafira-e Life</td>
+<td style="text-align: left;">319 532 kr</td>
+<td style="text-align: left;">749 900 kr</td>
+<td style="text-align: left;">430 368 kr</td>
+<td style="text-align: left;">57%</td>
+<td style="text-align: left;">GS L3 75 kWh</td>
+<td style="text-align: right;">2021</td>
+<td style="text-align: left;">56 660</td>
+<td style="text-align: left;">50 kWh</td>
+<td style="text-align: left;">230 km</td>
+<td style="text-align: right;">8</td>
+<td style="text-align: left;">XL/L3</td>
+<td style="text-align: left;">Agder</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><a href="https://www.finn.no/mobility/item/460970224">460970224</a></td>
+<td style="text-align: left;">Opel Zafira-e Life</td>
+<td style="text-align: left;">399 000 kr</td>
+<td style="text-align: left;">734 775 kr</td>
+<td style="text-align: left;">335 775 kr</td>
+<td style="text-align: left;">46%</td>
+<td style="text-align: left;">GS L2 75 kWh</td>
+<td style="text-align: right;">2022</td>
+<td style="text-align: left;">44 800</td>
+<td style="text-align: left;">75 kWh</td>
+<td style="text-align: left;">329 km</td>
+<td style="text-align: right;">8</td>
+<td style="text-align: left;">M/L2</td>
+<td style="text-align: left;">Møre og Romsdal/Vestland</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><a href="https://www.finn.no/mobility/item/463476333">463476333</a></td>
+<td style="text-align: left;">Opel Zafira-e Life</td>
+<td style="text-align: left;">429 900 kr</td>
+<td style="text-align: left;">769 687 kr</td>
+<td style="text-align: left;">339 787 kr</td>
+<td style="text-align: left;">44%</td>
+<td style="text-align: left;">GS L3 75 kWh</td>
+<td style="text-align: right;">2023</td>
+<td style="text-align: left;">39 520</td>
+<td style="text-align: left;">68 kWh</td>
+<td style="text-align: left;">312 km</td>
+<td style="text-align: right;">9</td>
+<td style="text-align: left;">XL/L3</td>
+<td style="text-align: left;">Ukjent</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><a href="https://www.finn.no/mobility/item/450759876">450759876</a></td>
+<td style="text-align: left;">Opel Zafira-e Life</td>
+<td style="text-align: left;">599 000 kr</td>
+<td style="text-align: left;">749 900 kr</td>
+<td style="text-align: left;">150 900 kr</td>
+<td style="text-align: left;">20%</td>
+<td style="text-align: left;">GS L3 75 kWh</td>
+<td style="text-align: right;">2025</td>
+<td style="text-align: left;">5 350</td>
+<td style="text-align: left;">75 kWh</td>
+<td style="text-align: left;">350 km</td>
+<td style="text-align: right;">8</td>
+<td style="text-align: left;">XL/L3</td>
+<td style="text-align: left;">Ukjent</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><a href="https://www.finn.no/mobility/item/459723398">459723398</a></td>
+<td style="text-align: left;">Peugeot e-Traveller</td>
+<td style="text-align: left;">329 900 kr</td>
+<td style="text-align: left;">683 600 kr</td>
+<td style="text-align: left;">353 700 kr</td>
+<td style="text-align: left;">52%</td>
+<td style="text-align: left;">Business L2 + common high-spec options</td>
+<td style="text-align: right;">2021</td>
+<td style="text-align: left;">105 000</td>
+<td style="text-align: left;">75 kWh</td>
+<td style="text-align: left;">330 km</td>
+<td style="text-align: right;">8</td>
+<td style="text-align: left;">Ukjent</td>
+<td style="text-align: left;">Akershus</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><a href="https://www.finn.no/mobility/item/460798037">460798037</a></td>
+<td style="text-align: left;">Peugeot e-Traveller</td>
+<td style="text-align: left;">339 532 kr</td>
+<td style="text-align: left;">698 475 kr</td>
+<td style="text-align: left;">358 943 kr</td>
+<td style="text-align: left;">51%</td>
+<td style="text-align: left;">Business L2 + common high-spec options</td>
+<td style="text-align: right;">2021</td>
+<td style="text-align: left;">74 000</td>
+<td style="text-align: left;">75 kWh</td>
+<td style="text-align: left;">330 km</td>
+<td style="text-align: right;">8</td>
+<td style="text-align: left;">M/L2</td>
+<td style="text-align: left;">Møre og Romsdal/Vestland</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><a href="https://www.finn.no/mobility/item/458788597">458788597</a></td>
+<td style="text-align: left;">Peugeot e-Traveller</td>
+<td style="text-align: left;">339 532 kr</td>
+<td style="text-align: left;">698 475 kr</td>
+<td style="text-align: left;">358 943 kr</td>
+<td style="text-align: left;">51%</td>
+<td style="text-align: left;">Business L2 + common high-spec options</td>
+<td style="text-align: right;">2021</td>
+<td style="text-align: left;">135 000</td>
+<td style="text-align: left;">75 kWh</td>
+<td style="text-align: left;">330 km</td>
+<td style="text-align: right;">8</td>
+<td style="text-align: left;">M/L2</td>
+<td style="text-align: left;">Trøndelag/Nordland</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><a href="https://www.finn.no/mobility/item/463472940">463472940</a></td>
+<td style="text-align: left;">Peugeot e-Traveller</td>
+<td style="text-align: left;">349 000 kr</td>
+<td style="text-align: left;">698 475 kr</td>
+<td style="text-align: left;">349 475 kr</td>
+<td style="text-align: left;">50%</td>
+<td style="text-align: left;">Business L2 + common high-spec options</td>
+<td style="text-align: right;">2021</td>
+<td style="text-align: left;">70 000</td>
+<td style="text-align: left;">68 kWh</td>
+<td style="text-align: left;">302 km</td>
+<td style="text-align: right;">7</td>
+<td style="text-align: left;">Ukjent</td>
+<td style="text-align: left;">Ukjent</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><a href="https://www.finn.no/mobility/item/463471877">463471877</a></td>
+<td style="text-align: left;">Peugeot e-Traveller</td>
+<td style="text-align: left;">349 000 kr</td>
+<td style="text-align: left;">698 475 kr</td>
+<td style="text-align: left;">349 475 kr</td>
+<td style="text-align: left;">50%</td>
+<td style="text-align: left;">Business L2 + common high-spec options</td>
+<td style="text-align: right;">2021</td>
+<td style="text-align: left;">63 900</td>
+<td style="text-align: left;">68 kWh</td>
+<td style="text-align: left;">311 km</td>
+<td style="text-align: right;">8</td>
+<td style="text-align: left;">Ukjent</td>
+<td style="text-align: left;">Ukjent</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><a href="https://www.finn.no/mobility/item/462879973">462879973</a></td>
+<td style="text-align: left;">Peugeot e-Traveller</td>
+<td style="text-align: left;">349 000 kr</td>
+<td style="text-align: left;">718 600 kr</td>
+<td style="text-align: left;">369 600 kr</td>
+<td style="text-align: left;">51%</td>
+<td style="text-align: left;">Business L3 + common high-spec options</td>
+<td style="text-align: right;">2021</td>
+<td style="text-align: left;">79 800</td>
+<td style="text-align: left;">75 kWh</td>
+<td style="text-align: left;">350 km</td>
+<td style="text-align: right;">8</td>
+<td style="text-align: left;">XL/L3</td>
+<td style="text-align: left;">Ukjent</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><a href="https://www.finn.no/mobility/item/460911550">460911550</a></td>
+<td style="text-align: left;">Peugeot e-Traveller</td>
+<td style="text-align: left;">379 000 kr</td>
+<td style="text-align: left;">659 775 kr</td>
+<td style="text-align: left;">280 775 kr</td>
+<td style="text-align: left;">43%</td>
+<td style="text-align: left;">Business L2 75 kWh</td>
+<td style="text-align: right;">2021</td>
+<td style="text-align: left;">61 000</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">305 km</td>
+<td style="text-align: right;">9</td>
+<td style="text-align: left;">M/L2</td>
+<td style="text-align: left;">Ukjent</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><a href="https://www.finn.no/mobility/item/455979534">455979534</a></td>
+<td style="text-align: left;">Peugeot e-Traveller</td>
+<td style="text-align: left;">389 000 kr</td>
+<td style="text-align: left;">738 375 kr</td>
+<td style="text-align: left;">349 375 kr</td>
+<td style="text-align: left;">47%</td>
+<td style="text-align: left;">Business L3 + common high-spec options</td>
+<td style="text-align: right;">2022</td>
+<td style="text-align: left;">54 500</td>
+<td style="text-align: left;">68 kWh</td>
+<td style="text-align: left;">314 km</td>
+<td style="text-align: right;">9</td>
+<td style="text-align: left;">XL/L3</td>
+<td style="text-align: left;">Ukjent</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><a href="https://www.finn.no/mobility/item/462910944">462910944</a></td>
+<td style="text-align: left;">Peugeot e-Traveller</td>
+<td style="text-align: left;">399 532 kr</td>
+<td style="text-align: left;">683 600 kr</td>
+<td style="text-align: left;">284 068 kr</td>
+<td style="text-align: left;">42%</td>
+<td style="text-align: left;">Business L2 + common high-spec options</td>
+<td style="text-align: right;">2021</td>
+<td style="text-align: left;">69 575</td>
+<td style="text-align: left;">75 kWh</td>
+<td style="text-align: left;">311 km</td>
+<td style="text-align: right;">8</td>
+<td style="text-align: left;">Ukjent</td>
+<td style="text-align: left;">Oslo</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><a href="https://www.finn.no/mobility/item/426629986">426629986</a></td>
+<td style="text-align: left;">Peugeot e-Traveller</td>
+<td style="text-align: left;">429 918 kr</td>
+<td style="text-align: left;">698 475 kr</td>
+<td style="text-align: left;">268 557 kr</td>
+<td style="text-align: left;">38%</td>
+<td style="text-align: left;">Business L2 + common high-spec options</td>
+<td style="text-align: right;">2021</td>
+<td style="text-align: left;">38 778</td>
+<td style="text-align: left;">75 kWh</td>
+<td style="text-align: left;">313 km</td>
+<td style="text-align: right;">8</td>
+<td style="text-align: left;">Ukjent</td>
+<td style="text-align: left;">Oslo</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><a href="https://www.finn.no/mobility/item/380539848">380539848</a></td>
+<td style="text-align: left;">Toyota Proace Verso Electric</td>
+<td style="text-align: left;">319 129 kr</td>
+<td style="text-align: left;">698 400 kr</td>
+<td style="text-align: left;">379 271 kr</td>
+<td style="text-align: left;">54%</td>
+<td style="text-align: left;">Family Plus</td>
+<td style="text-align: right;">2021</td>
+<td style="text-align: left;">134 000</td>
+<td style="text-align: left;">75 kWh</td>
+<td style="text-align: left;">0 km</td>
+<td style="text-align: right;">8</td>
+<td style="text-align: left;">XL/L3</td>
+<td style="text-align: left;">Rogaland/Vestland</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><a href="https://www.finn.no/mobility/item/456933969">456933969</a></td>
+<td style="text-align: left;">Toyota Proace Verso Electric</td>
+<td style="text-align: left;">409 000 kr</td>
+<td style="text-align: left;">698 400 kr</td>
+<td style="text-align: left;">289 400 kr</td>
+<td style="text-align: left;">41%</td>
+<td style="text-align: left;">Family Plus</td>
+<td style="text-align: right;">2024</td>
+<td style="text-align: left;">2 100</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">100 km</td>
+<td style="text-align: right;">5</td>
+<td style="text-align: left;">Ukjent</td>
+<td style="text-align: left;">Ukjent</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><a href="https://www.finn.no/mobility/item/460240451">460240451</a></td>
+<td style="text-align: left;">Toyota Proace Verso Electric</td>
+<td style="text-align: left;">529 000 kr</td>
+<td style="text-align: left;">627 500 kr</td>
+<td style="text-align: left;">98 500 kr</td>
+<td style="text-align: left;">16%</td>
+<td style="text-align: left;">Shuttle Nordic V2</td>
+<td style="text-align: right;">2024</td>
+<td style="text-align: left;">2 400</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">316 km</td>
+<td style="text-align: right;">8</td>
+<td style="text-align: left;">Ukjent</td>
+<td style="text-align: left;">Ukjent</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><a href="https://www.finn.no/mobility/item/459852675">459852675</a></td>
+<td style="text-align: left;">Toyota Proace Verso Electric</td>
+<td style="text-align: left;">549 000 kr</td>
+<td style="text-align: left;">698 400 kr</td>
+<td style="text-align: left;">149 400 kr</td>
+<td style="text-align: left;">21%</td>
+<td style="text-align: left;">Family Plus</td>
+<td style="text-align: right;">2024</td>
+<td style="text-align: left;">3 500</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">340 km</td>
+<td style="text-align: right;">8</td>
+<td style="text-align: left;">Ukjent</td>
+<td style="text-align: left;">Ukjent</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><a href="https://www.finn.no/mobility/item/459405352">459405352</a></td>
+<td style="text-align: left;">Toyota Proace Verso Electric</td>
+<td style="text-align: left;">599 900 kr</td>
+<td style="text-align: left;">698 400 kr</td>
+<td style="text-align: left;">98 500 kr</td>
+<td style="text-align: left;">14%</td>
+<td style="text-align: left;">Family Plus</td>
+<td style="text-align: right;">2023</td>
+<td style="text-align: left;">10 000</td>
+<td style="text-align: left;">75 kWh</td>
+<td style="text-align: left;">310 km</td>
+<td style="text-align: right;">9</td>
+<td style="text-align: left;">XL/L3</td>
+<td style="text-align: left;">Ukjent</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><a href="https://www.finn.no/mobility/item/461492193">461492193</a></td>
+<td style="text-align: left;">Toyota Proace Verso Electric</td>
+<td style="text-align: left;">619 000 kr</td>
+<td style="text-align: left;">698 400 kr</td>
+<td style="text-align: left;">79 400 kr</td>
+<td style="text-align: left;">11%</td>
+<td style="text-align: left;">Family Plus</td>
+<td style="text-align: right;">2025</td>
+<td style="text-align: left;">300</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">340 km</td>
+<td style="text-align: right;">9</td>
+<td style="text-align: left;">XL/L3</td>
+<td style="text-align: left;">Ukjent</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><a href="https://www.finn.no/mobility/item/437148373">437148373</a></td>
+<td style="text-align: left;">Toyota Proace Verso Electric</td>
+<td style="text-align: left;">659 000 kr</td>
+<td style="text-align: left;">698 400 kr</td>
+<td style="text-align: left;">39 400 kr</td>
+<td style="text-align: left;">6%</td>
+<td style="text-align: left;">Family Plus</td>
+<td style="text-align: right;">2024</td>
+<td style="text-align: left;">20 000</td>
+<td style="text-align: left;">75 kWh</td>
+<td style="text-align: left;">309 km</td>
+<td style="text-align: right;">8</td>
+<td style="text-align: left;">XL/L3</td>
+<td style="text-align: left;">Ukjent</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><a href="https://www.finn.no/mobility/item/460244271">460244271</a></td>
+<td style="text-align: left;">Toyota Proace Verso Electric</td>
+<td style="text-align: left;">639 990 kr</td>
+<td style="text-align: left;">698 400 kr</td>
+<td style="text-align: left;">58 410 kr</td>
+<td style="text-align: left;">8%</td>
+<td style="text-align: left;">Family Plus</td>
+<td style="text-align: right;">2023</td>
+<td style="text-align: left;">58 156</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">156 km</td>
+<td style="text-align: right;">9</td>
+<td style="text-align: left;">XL/L3</td>
+<td style="text-align: left;">Ukjent</td>
+</tr>
 </tbody>
 </table>
 </div>
@@ -440,7 +856,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <div class="cell">
 <details class="code-fold">
 <summary>Code</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>relevant <span class="sc">|&gt;</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>model_data <span class="sc">|&gt;</span></span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">count</span>(vehicle_model, model_year, battery_kwh, seats, length_variant, county, <span class="at">sort =</span> <span class="cn">TRUE</span>) <span class="sc">|&gt;</span></span>
 <span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">kable</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
@@ -448,12 +864,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <table class="caption-top table table-sm table-striped small">
 <colgroup>
 <col style="width: 28%">
-<col style="width: 14%">
-<col style="width: 15%">
-<col style="width: 7%">
-<col style="width: 19%">
+<col style="width: 10%">
 <col style="width: 11%">
-<col style="width: 3%">
+<col style="width: 5%">
+<col style="width: 14%">
+<col style="width: 24%">
+<col style="width: 2%">
 </colgroup>
 <thead>
 <tr class="header">
@@ -472,8 +888,26 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <td style="text-align: right;">2024</td>
 <td style="text-align: right;">75</td>
 <td style="text-align: right;">6</td>
-<td style="text-align: left;">NA</td>
+<td style="text-align: left;">Ukjent</td>
 <td style="text-align: left;">Akershus</td>
+<td style="text-align: right;">2</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Peugeot e-Traveller</td>
+<td style="text-align: right;">2021</td>
+<td style="text-align: right;">75</td>
+<td style="text-align: right;">8</td>
+<td style="text-align: left;">Ukjent</td>
+<td style="text-align: left;">Oslo</td>
+<td style="text-align: right;">2</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Toyota Proace Verso Electric</td>
+<td style="text-align: right;">2024</td>
+<td style="text-align: right;">NA</td>
+<td style="text-align: right;">8</td>
+<td style="text-align: left;">Ukjent</td>
+<td style="text-align: left;">Ukjent</td>
 <td style="text-align: right;">2</td>
 </tr>
 <tr class="even">
@@ -481,7 +915,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <td style="text-align: right;">2020</td>
 <td style="text-align: right;">50</td>
 <td style="text-align: right;">9</td>
-<td style="text-align: left;">NA</td>
+<td style="text-align: left;">Ukjent</td>
 <td style="text-align: left;">Akershus</td>
 <td style="text-align: right;">1</td>
 </tr>
@@ -512,6 +946,204 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <td style="text-align: left;">Oslo</td>
 <td style="text-align: right;">1</td>
 </tr>
+<tr class="even">
+<td style="text-align: left;">Opel Zafira-e Life</td>
+<td style="text-align: right;">2021</td>
+<td style="text-align: right;">46</td>
+<td style="text-align: right;">8</td>
+<td style="text-align: left;">Ukjent</td>
+<td style="text-align: left;">Ukjent</td>
+<td style="text-align: right;">1</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Opel Zafira-e Life</td>
+<td style="text-align: right;">2021</td>
+<td style="text-align: right;">50</td>
+<td style="text-align: right;">8</td>
+<td style="text-align: left;">XL/L3</td>
+<td style="text-align: left;">Agder</td>
+<td style="text-align: right;">1</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Opel Zafira-e Life</td>
+<td style="text-align: right;">2021</td>
+<td style="text-align: right;">50</td>
+<td style="text-align: right;">9</td>
+<td style="text-align: left;">Ukjent</td>
+<td style="text-align: left;">Innlandet</td>
+<td style="text-align: right;">1</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Opel Zafira-e Life</td>
+<td style="text-align: right;">2022</td>
+<td style="text-align: right;">75</td>
+<td style="text-align: right;">6</td>
+<td style="text-align: left;">M/L2</td>
+<td style="text-align: left;">Akershus</td>
+<td style="text-align: right;">1</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Opel Zafira-e Life</td>
+<td style="text-align: right;">2022</td>
+<td style="text-align: right;">75</td>
+<td style="text-align: right;">8</td>
+<td style="text-align: left;">M/L2</td>
+<td style="text-align: left;">Møre og Romsdal/Vestland</td>
+<td style="text-align: right;">1</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Opel Zafira-e Life</td>
+<td style="text-align: right;">2023</td>
+<td style="text-align: right;">68</td>
+<td style="text-align: right;">9</td>
+<td style="text-align: left;">XL/L3</td>
+<td style="text-align: left;">Ukjent</td>
+<td style="text-align: right;">1</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Opel Zafira-e Life</td>
+<td style="text-align: right;">2023</td>
+<td style="text-align: right;">75</td>
+<td style="text-align: right;">8</td>
+<td style="text-align: left;">XL/L3</td>
+<td style="text-align: left;">Trøndelag/Nordland</td>
+<td style="text-align: right;">1</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Opel Zafira-e Life</td>
+<td style="text-align: right;">2025</td>
+<td style="text-align: right;">75</td>
+<td style="text-align: right;">8</td>
+<td style="text-align: left;">XL/L3</td>
+<td style="text-align: left;">Ukjent</td>
+<td style="text-align: right;">1</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Peugeot e-Traveller</td>
+<td style="text-align: right;">2021</td>
+<td style="text-align: right;">68</td>
+<td style="text-align: right;">7</td>
+<td style="text-align: left;">Ukjent</td>
+<td style="text-align: left;">Ukjent</td>
+<td style="text-align: right;">1</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Peugeot e-Traveller</td>
+<td style="text-align: right;">2021</td>
+<td style="text-align: right;">68</td>
+<td style="text-align: right;">8</td>
+<td style="text-align: left;">Ukjent</td>
+<td style="text-align: left;">Ukjent</td>
+<td style="text-align: right;">1</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Peugeot e-Traveller</td>
+<td style="text-align: right;">2021</td>
+<td style="text-align: right;">75</td>
+<td style="text-align: right;">8</td>
+<td style="text-align: left;">M/L2</td>
+<td style="text-align: left;">Møre og Romsdal/Vestland</td>
+<td style="text-align: right;">1</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Peugeot e-Traveller</td>
+<td style="text-align: right;">2021</td>
+<td style="text-align: right;">75</td>
+<td style="text-align: right;">8</td>
+<td style="text-align: left;">M/L2</td>
+<td style="text-align: left;">Trøndelag/Nordland</td>
+<td style="text-align: right;">1</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Peugeot e-Traveller</td>
+<td style="text-align: right;">2021</td>
+<td style="text-align: right;">75</td>
+<td style="text-align: right;">8</td>
+<td style="text-align: left;">Ukjent</td>
+<td style="text-align: left;">Akershus</td>
+<td style="text-align: right;">1</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Peugeot e-Traveller</td>
+<td style="text-align: right;">2021</td>
+<td style="text-align: right;">75</td>
+<td style="text-align: right;">8</td>
+<td style="text-align: left;">XL/L3</td>
+<td style="text-align: left;">Ukjent</td>
+<td style="text-align: right;">1</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Peugeot e-Traveller</td>
+<td style="text-align: right;">2021</td>
+<td style="text-align: right;">NA</td>
+<td style="text-align: right;">9</td>
+<td style="text-align: left;">M/L2</td>
+<td style="text-align: left;">Ukjent</td>
+<td style="text-align: right;">1</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Peugeot e-Traveller</td>
+<td style="text-align: right;">2022</td>
+<td style="text-align: right;">68</td>
+<td style="text-align: right;">9</td>
+<td style="text-align: left;">XL/L3</td>
+<td style="text-align: left;">Ukjent</td>
+<td style="text-align: right;">1</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Toyota Proace Verso Electric</td>
+<td style="text-align: right;">2021</td>
+<td style="text-align: right;">75</td>
+<td style="text-align: right;">8</td>
+<td style="text-align: left;">XL/L3</td>
+<td style="text-align: left;">Rogaland/Vestland</td>
+<td style="text-align: right;">1</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Toyota Proace Verso Electric</td>
+<td style="text-align: right;">2023</td>
+<td style="text-align: right;">75</td>
+<td style="text-align: right;">9</td>
+<td style="text-align: left;">XL/L3</td>
+<td style="text-align: left;">Ukjent</td>
+<td style="text-align: right;">1</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Toyota Proace Verso Electric</td>
+<td style="text-align: right;">2023</td>
+<td style="text-align: right;">NA</td>
+<td style="text-align: right;">9</td>
+<td style="text-align: left;">XL/L3</td>
+<td style="text-align: left;">Ukjent</td>
+<td style="text-align: right;">1</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Toyota Proace Verso Electric</td>
+<td style="text-align: right;">2024</td>
+<td style="text-align: right;">75</td>
+<td style="text-align: right;">8</td>
+<td style="text-align: left;">XL/L3</td>
+<td style="text-align: left;">Ukjent</td>
+<td style="text-align: right;">1</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Toyota Proace Verso Electric</td>
+<td style="text-align: right;">2024</td>
+<td style="text-align: right;">NA</td>
+<td style="text-align: right;">5</td>
+<td style="text-align: left;">Ukjent</td>
+<td style="text-align: left;">Ukjent</td>
+<td style="text-align: right;">1</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Toyota Proace Verso Electric</td>
+<td style="text-align: right;">2025</td>
+<td style="text-align: right;">NA</td>
+<td style="text-align: right;">9</td>
+<td style="text-align: left;">XL/L3</td>
+<td style="text-align: left;">Ukjent</td>
+<td style="text-align: right;">1</td>
+</tr>
 </tbody>
 </table>
 </div>
@@ -524,7 +1156,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <summary>Code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(market, <span class="fu">aes</span>(km, price, <span class="at">color =</span> county)) <span class="sc">+</span></span>
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="fu">aes</span>(<span class="at">size =</span> battery_kwh, <span class="at">shape =</span> vehicle_model), <span class="at">alpha =</span> <span class="fl">0.85</span>) <span class="sc">+</span></span>
-<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_text</span>(<span class="at">data =</span> relevant, <span class="fu">aes</span>(<span class="at">label =</span> url_id), <span class="at">nudge_y =</span> <span class="dv">17000</span>, <span class="at">size =</span> <span class="dv">3</span>, <span class="at">show.legend =</span> <span class="cn">FALSE</span>) <span class="sc">+</span></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_text</span>(<span class="at">data =</span> model_data, <span class="fu">aes</span>(<span class="at">label =</span> url_id), <span class="at">nudge_y =</span> <span class="dv">17000</span>, <span class="at">size =</span> <span class="fl">2.5</span>, <span class="at">show.legend =</span> <span class="cn">FALSE</span>, <span class="at">check_overlap =</span> <span class="cn">TRUE</span>) <span class="sc">+</span></span>
 <span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_x_continuous</span>(<span class="at">labels =</span> <span class="fu">label_number</span>(<span class="at">big.mark =</span> <span class="st">" "</span>, <span class="at">suffix =</span> <span class="st">" km"</span>)) <span class="sc">+</span></span>
 <span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_y_continuous</span>(<span class="at">labels =</span> money) <span class="sc">+</span></span>
 <span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_size_continuous</span>(<span class="at">name =</span> <span class="st">"Batteri kWh"</span>, <span class="at">range =</span> <span class="fu">c</span>(<span class="fl">2.5</span>, <span class="dv">5</span>), <span class="at">breaks =</span> <span class="fu">c</span>(<span class="dv">50</span>, <span class="dv">75</span>)) <span class="sc">+</span></span>
@@ -544,7 +1176,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <summary>Code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(model_data, <span class="fu">aes</span>(ad_age_years, depreciation, <span class="at">color =</span> vehicle_model)) <span class="sc">+</span></span>
 <span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="fu">aes</span>(<span class="at">size =</span> km), <span class="at">alpha =</span> <span class="fl">0.8</span>) <span class="sc">+</span></span>
-<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_text</span>(<span class="at">data =</span> model_data <span class="sc">|&gt;</span> <span class="fu">filter</span>(relevant), <span class="fu">aes</span>(<span class="at">label =</span> url_id), <span class="at">nudge_y =</span> <span class="dv">16000</span>, <span class="at">size =</span> <span class="dv">3</span>, <span class="at">show.legend =</span> <span class="cn">FALSE</span>) <span class="sc">+</span></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_text</span>(<span class="fu">aes</span>(<span class="at">label =</span> url_id), <span class="at">nudge_y =</span> <span class="dv">16000</span>, <span class="at">size =</span> <span class="fl">2.5</span>, <span class="at">show.legend =</span> <span class="cn">FALSE</span>, <span class="at">check_overlap =</span> <span class="cn">TRUE</span>) <span class="sc">+</span></span>
 <span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_y_continuous</span>(<span class="at">labels =</span> money) <span class="sc">+</span></span>
 <span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_size_continuous</span>(<span class="at">labels =</span> <span class="fu">label_number</span>(<span class="at">big.mark =</span> <span class="st">" "</span>), <span class="at">guide =</span> <span class="st">"none"</span>) <span class="sc">+</span></span>
 <span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"Alder (år fra modellår)"</span>, <span class="at">y =</span> <span class="st">"Pristap"</span>, <span class="at">color =</span> <span class="st">"Bilmodell"</span>) <span class="sc">+</span></span>
@@ -1284,8 +1916,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 </div>
 </section>
-<section id="mest-underpriset" class="level2">
-<h2 class="anchored" data-anchor-id="mest-underpriset">Mest underpriset</h2>
+<section id="mest-gunstige-kandidater" class="level2">
+<h2 class="anchored" data-anchor-id="mest-gunstige-kandidater">Mest gunstige kandidater</h2>
 <div class="cell">
 <details class="code-fold">
 <summary>Code</summary>
@@ -1314,21 +1946,21 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <table class="caption-top table table-sm table-striped small">
 <colgroup>
 <col style="width: 1%">
-<col style="width: 23%">
 <col style="width: 19%">
+<col style="width: 20%">
+<col style="width: 8%">
+<col style="width: 3%">
+<col style="width: 3%">
+<col style="width: 3%">
+<col style="width: 5%">
+<col style="width: 4%">
+<col style="width: 4%">
+<col style="width: 10%">
+<col style="width: 2%">
+<col style="width: 2%">
+<col style="width: 2%">
+<col style="width: 1%">
 <col style="width: 7%">
-<col style="width: 3%">
-<col style="width: 3%">
-<col style="width: 3%">
-<col style="width: 6%">
-<col style="width: 5%">
-<col style="width: 5%">
-<col style="width: 5%">
-<col style="width: 3%">
-<col style="width: 2%">
-<col style="width: 2%">
-<col style="width: 2%">
-<col style="width: 3%">
 </colgroup>
 <thead>
 <tr class="header">
@@ -1353,6 +1985,96 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <tbody>
 <tr class="odd">
 <td style="text-align: right;">1</td>
+<td style="text-align: left;"><a href="https://www.finn.no/mobility/item/461006616">461006616</a></td>
+<td style="text-align: left;">El- L3 75kWh 136hk 8-seter, landets billigste, eu ok</td>
+<td style="text-align: left;">Opel Zafira-e Life</td>
+<td style="text-align: left;">299 900 kr</td>
+<td style="text-align: left;">749 900 kr</td>
+<td style="text-align: left;">450 000 kr</td>
+<td style="text-align: left;">287 050 kr</td>
+<td style="text-align: left;">162 950 kr</td>
+<td style="text-align: left;">22%</td>
+<td style="text-align: left;">GS L3 75 kWh</td>
+<td style="text-align: right;">2023</td>
+<td style="text-align: left;">153 444</td>
+<td style="text-align: left;">75 kWh</td>
+<td style="text-align: right;">8</td>
+<td style="text-align: left;">Trøndelag/Nordland</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">2</td>
+<td style="text-align: left;"><a href="https://www.finn.no/mobility/item/456933969">456933969</a></td>
+<td style="text-align: left;">Electric Cruise/Navi/Kamera/Dab+</td>
+<td style="text-align: left;">Toyota Proace Verso Electric</td>
+<td style="text-align: left;">409 000 kr</td>
+<td style="text-align: left;">698 400 kr</td>
+<td style="text-align: left;">289 400 kr</td>
+<td style="text-align: left;">141 317 kr</td>
+<td style="text-align: left;">148 083 kr</td>
+<td style="text-align: left;">21%</td>
+<td style="text-align: left;">Family Plus</td>
+<td style="text-align: right;">2024</td>
+<td style="text-align: left;">2 100</td>
+<td style="text-align: left;">75 kWh</td>
+<td style="text-align: right;">5</td>
+<td style="text-align: left;">Ukjent</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">3</td>
+<td style="text-align: left;"><a href="https://www.finn.no/mobility/item/380539848">380539848</a></td>
+<td style="text-align: left;">Electric Lang Executive Family</td>
+<td style="text-align: left;">Toyota Proace Verso Electric</td>
+<td style="text-align: left;">319 129 kr</td>
+<td style="text-align: left;">698 400 kr</td>
+<td style="text-align: left;">379 271 kr</td>
+<td style="text-align: left;">304 930 kr</td>
+<td style="text-align: left;">74 341 kr</td>
+<td style="text-align: left;">11%</td>
+<td style="text-align: left;">Family Plus</td>
+<td style="text-align: right;">2021</td>
+<td style="text-align: left;">134 000</td>
+<td style="text-align: left;">75 kWh</td>
+<td style="text-align: right;">8</td>
+<td style="text-align: left;">Rogaland/Vestland</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">4</td>
+<td style="text-align: left;"><a href="https://www.finn.no/mobility/item/455979534">455979534</a></td>
+<td style="text-align: left;">L3 75 kWt Lane Assist/Fjernlysassistent/R.kamera</td>
+<td style="text-align: left;">Peugeot e-Traveller</td>
+<td style="text-align: left;">389 000 kr</td>
+<td style="text-align: left;">738 375 kr</td>
+<td style="text-align: left;">349 375 kr</td>
+<td style="text-align: left;">287 007 kr</td>
+<td style="text-align: left;">62 368 kr</td>
+<td style="text-align: left;">8%</td>
+<td style="text-align: left;">Business L3 + common high-spec options</td>
+<td style="text-align: right;">2022</td>
+<td style="text-align: left;">54 500</td>
+<td style="text-align: left;">68 kWh</td>
+<td style="text-align: right;">9</td>
+<td style="text-align: left;">Ukjent</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">5</td>
+<td style="text-align: left;"><a href="https://www.finn.no/mobility/item/458788597">458788597</a></td>
+<td style="text-align: left;">L2 Allure 75kWt</td>
+<td style="text-align: left;">Peugeot e-Traveller</td>
+<td style="text-align: left;">339 532 kr</td>
+<td style="text-align: left;">698 475 kr</td>
+<td style="text-align: left;">358 943 kr</td>
+<td style="text-align: left;">326 122 kr</td>
+<td style="text-align: left;">32 821 kr</td>
+<td style="text-align: left;">5%</td>
+<td style="text-align: left;">Business L2 + common high-spec options</td>
+<td style="text-align: right;">2021</td>
+<td style="text-align: left;">135 000</td>
+<td style="text-align: left;">75 kWh</td>
+<td style="text-align: right;">8</td>
+<td style="text-align: left;">Trøndelag/Nordland</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">6</td>
 <td style="text-align: left;"><a href="https://www.finn.no/mobility/item/451015720">451015720</a></td>
 <td style="text-align: left;">Citroen SpaceTourer</td>
 <td style="text-align: left;">Citroen ë-SpaceTourer</td>
@@ -1369,8 +2091,44 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <td style="text-align: right;">9</td>
 <td style="text-align: left;">Akershus</td>
 </tr>
+<tr class="odd">
+<td style="text-align: right;">7</td>
+<td style="text-align: left;"><a href="https://www.finn.no/mobility/item/459723398">459723398</a></td>
+<td style="text-align: left;">8 Seter / 330km / Skinn / Pano / ACC / HUD / Massasje +</td>
+<td style="text-align: left;">Peugeot e-Traveller</td>
+<td style="text-align: left;">329 900 kr</td>
+<td style="text-align: left;">683 600 kr</td>
+<td style="text-align: left;">353 700 kr</td>
+<td style="text-align: left;">322 152 kr</td>
+<td style="text-align: left;">31 548 kr</td>
+<td style="text-align: left;">5%</td>
+<td style="text-align: left;">Business L2 + common high-spec options</td>
+<td style="text-align: right;">2021</td>
+<td style="text-align: left;">105 000</td>
+<td style="text-align: left;">75 kWh</td>
+<td style="text-align: right;">8</td>
+<td style="text-align: left;">Akershus</td>
+</tr>
 <tr class="even">
-<td style="text-align: right;">2</td>
+<td style="text-align: right;">8</td>
+<td style="text-align: left;"><a href="https://www.finn.no/mobility/item/433519464">433519464</a></td>
+<td style="text-align: left;">Life 9-Seter 50KWh 212km / Cruise / CarPlay / S+V / DAB</td>
+<td style="text-align: left;">Opel Zafira-e Life</td>
+<td style="text-align: left;">239 000 kr</td>
+<td style="text-align: left;">719 900 kr</td>
+<td style="text-align: left;">480 900 kr</td>
+<td style="text-align: left;">453 879 kr</td>
+<td style="text-align: left;">27 021 kr</td>
+<td style="text-align: left;">4%</td>
+<td style="text-align: left;">GS L2 75 kWh</td>
+<td style="text-align: right;">2021</td>
+<td style="text-align: left;">99 000</td>
+<td style="text-align: left;">50 kWh</td>
+<td style="text-align: right;">9</td>
+<td style="text-align: left;">Innlandet</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">9</td>
 <td style="text-align: left;"><a href="https://www.finn.no/mobility/item/460885571">460885571</a></td>
 <td style="text-align: left;">75kWt 6 seter MOMSFRADRAG VED LEASING/PÅSKEKAMPANJE</td>
 <td style="text-align: left;">Citroen ë-SpaceTourer</td>
@@ -1387,8 +2145,134 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <td style="text-align: right;">6</td>
 <td style="text-align: left;">Akershus</td>
 </tr>
+<tr class="even">
+<td style="text-align: right;">10</td>
+<td style="text-align: left;"><a href="https://www.finn.no/mobility/item/459852675">459852675</a></td>
+<td style="text-align: left;">Electric 8-Seter ACC/Oppv.ratt/Navi/Kam/Dab+</td>
+<td style="text-align: left;">Toyota Proace Verso Electric</td>
+<td style="text-align: left;">549 000 kr</td>
+<td style="text-align: left;">698 400 kr</td>
+<td style="text-align: left;">149 400 kr</td>
+<td style="text-align: left;">128 888 kr</td>
+<td style="text-align: left;">20 512 kr</td>
+<td style="text-align: left;">3%</td>
+<td style="text-align: left;">Family Plus</td>
+<td style="text-align: right;">2024</td>
+<td style="text-align: left;">3 500</td>
+<td style="text-align: left;">75 kWh</td>
+<td style="text-align: right;">8</td>
+<td style="text-align: left;">Ukjent</td>
+</tr>
 <tr class="odd">
-<td style="text-align: right;">3</td>
+<td style="text-align: right;">11</td>
+<td style="text-align: left;"><a href="https://www.finn.no/mobility/item/460798037">460798037</a></td>
+<td style="text-align: left;">L2 Allure 75kWt</td>
+<td style="text-align: left;">Peugeot e-Traveller</td>
+<td style="text-align: left;">339 532 kr</td>
+<td style="text-align: left;">698 475 kr</td>
+<td style="text-align: left;">358 943 kr</td>
+<td style="text-align: left;">340 756 kr</td>
+<td style="text-align: left;">18 187 kr</td>
+<td style="text-align: left;">3%</td>
+<td style="text-align: left;">Business L2 + common high-spec options</td>
+<td style="text-align: right;">2021</td>
+<td style="text-align: left;">74 000</td>
+<td style="text-align: left;">75 kWh</td>
+<td style="text-align: right;">8</td>
+<td style="text-align: left;">Møre og Romsdal/Vestland</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">12</td>
+<td style="text-align: left;"><a href="https://www.finn.no/mobility/item/462879973">462879973</a></td>
+<td style="text-align: left;">75 kWh L3 8 seter BIS | SKINN| EL.DØRER|</td>
+<td style="text-align: left;">Peugeot e-Traveller</td>
+<td style="text-align: left;">349 000 kr</td>
+<td style="text-align: left;">718 600 kr</td>
+<td style="text-align: left;">369 600 kr</td>
+<td style="text-align: left;">352 568 kr</td>
+<td style="text-align: left;">17 032 kr</td>
+<td style="text-align: left;">2%</td>
+<td style="text-align: left;">Business L3 + common high-spec options</td>
+<td style="text-align: right;">2021</td>
+<td style="text-align: left;">79 800</td>
+<td style="text-align: left;">75 kWh</td>
+<td style="text-align: right;">8</td>
+<td style="text-align: left;">Ukjent</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">13</td>
+<td style="text-align: left;"><a href="https://www.finn.no/mobility/item/460240451">460240451</a></td>
+<td style="text-align: left;">Electric 8-Seter ACC/Oppv.ratt/Navi/Kam/Dab+/Krok</td>
+<td style="text-align: left;">Toyota Proace Verso Electric</td>
+<td style="text-align: left;">529 000 kr</td>
+<td style="text-align: left;">627 500 kr</td>
+<td style="text-align: left;">98 500 kr</td>
+<td style="text-align: left;">89 986 kr</td>
+<td style="text-align: left;">8 514 kr</td>
+<td style="text-align: left;">1%</td>
+<td style="text-align: left;">Shuttle Nordic V2</td>
+<td style="text-align: right;">2024</td>
+<td style="text-align: left;">2 400</td>
+<td style="text-align: left;">75 kWh</td>
+<td style="text-align: right;">8</td>
+<td style="text-align: left;">Ukjent</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">14</td>
+<td style="text-align: left;"><a href="https://www.finn.no/mobility/item/463472940">463472940</a></td>
+<td style="text-align: left;">Allure / 7-SETER / SKINN / RYGGEKAMERA / GLASSTAK /</td>
+<td style="text-align: left;">Peugeot e-Traveller</td>
+<td style="text-align: left;">349 000 kr</td>
+<td style="text-align: left;">698 475 kr</td>
+<td style="text-align: left;">349 475 kr</td>
+<td style="text-align: left;">342 109 kr</td>
+<td style="text-align: left;">7 366 kr</td>
+<td style="text-align: left;">1%</td>
+<td style="text-align: left;">Business L2 + common high-spec options</td>
+<td style="text-align: right;">2021</td>
+<td style="text-align: left;">70 000</td>
+<td style="text-align: left;">68 kWh</td>
+<td style="text-align: right;">7</td>
+<td style="text-align: left;">Ukjent</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">15</td>
+<td style="text-align: left;"><a href="https://www.finn.no/mobility/item/463476333">463476333</a></td>
+<td style="text-align: left;">LIFE/75kWh/L3/BUSINESS/9-SETER/CRUISE/R.KAM/XENON/NAVI</td>
+<td style="text-align: left;">Opel Zafira-e Life</td>
+<td style="text-align: left;">429 900 kr</td>
+<td style="text-align: left;">769 687 kr</td>
+<td style="text-align: left;">339 787 kr</td>
+<td style="text-align: left;">333 488 kr</td>
+<td style="text-align: left;">6 299 kr</td>
+<td style="text-align: left;">1%</td>
+<td style="text-align: left;">GS L3 75 kWh</td>
+<td style="text-align: right;">2023</td>
+<td style="text-align: left;">39 520</td>
+<td style="text-align: left;">68 kWh</td>
+<td style="text-align: right;">9</td>
+<td style="text-align: left;">Ukjent</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">16</td>
+<td style="text-align: left;"><a href="https://www.finn.no/mobility/item/463471877">463471877</a></td>
+<td style="text-align: left;">Allure / 8-SETER / SKINN / RYGGEKAMERA / GLASSTAK /</td>
+<td style="text-align: left;">Peugeot e-Traveller</td>
+<td style="text-align: left;">349 000 kr</td>
+<td style="text-align: left;">698 475 kr</td>
+<td style="text-align: left;">349 475 kr</td>
+<td style="text-align: left;">344 328 kr</td>
+<td style="text-align: left;">5 147 kr</td>
+<td style="text-align: left;">1%</td>
+<td style="text-align: left;">Business L2 + common high-spec options</td>
+<td style="text-align: right;">2021</td>
+<td style="text-align: left;">63 900</td>
+<td style="text-align: left;">68 kWh</td>
+<td style="text-align: right;">8</td>
+<td style="text-align: left;">Ukjent</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">17</td>
 <td style="text-align: left;"><a href="https://www.finn.no/mobility/item/460924816">460924816</a></td>
 <td style="text-align: left;">75kWt 6 seter Fantastisk familiebil | Leveringsklar</td>
 <td style="text-align: left;">Citroen ë-SpaceTourer</td>
@@ -1406,7 +2290,25 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <td style="text-align: left;">Akershus</td>
 </tr>
 <tr class="even">
-<td style="text-align: right;">4</td>
+<td style="text-align: right;">18</td>
+<td style="text-align: left;"><a href="https://www.finn.no/mobility/item/462768464">462768464</a></td>
+<td style="text-align: left;">BRUKTBILKAMPANJE 136hk 50kWt 8- seter | Skinn</td>
+<td style="text-align: left;">Opel Zafira-e Life</td>
+<td style="text-align: left;">279 000 kr</td>
+<td style="text-align: left;">734 900 kr</td>
+<td style="text-align: left;">455 900 kr</td>
+<td style="text-align: left;">469 238 kr</td>
+<td style="text-align: left;">-13 338 kr</td>
+<td style="text-align: left;">-2%</td>
+<td style="text-align: left;">GS L2 75 kWh</td>
+<td style="text-align: right;">2021</td>
+<td style="text-align: left;">80 000</td>
+<td style="text-align: left;">46 kWh</td>
+<td style="text-align: right;">8</td>
+<td style="text-align: left;">Ukjent</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">19</td>
 <td style="text-align: left;"><a href="https://www.finn.no/mobility/item/462489982">462489982</a></td>
 <td style="text-align: left;">75kWt L2 Shine</td>
 <td style="text-align: left;">Citroen ë-SpaceTourer</td>
@@ -1423,8 +2325,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <td style="text-align: right;">8</td>
 <td style="text-align: left;">Akershus</td>
 </tr>
-<tr class="odd">
-<td style="text-align: right;">5</td>
+<tr class="even">
+<td style="text-align: right;">20</td>
 <td style="text-align: left;"><a href="https://www.finn.no/mobility/item/441656103">441656103</a></td>
 <td style="text-align: left;">75kWt L3 Shine</td>
 <td style="text-align: left;">Citroen ë-SpaceTourer</td>
@@ -1441,8 +2343,44 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <td style="text-align: right;">8</td>
 <td style="text-align: left;">Akershus</td>
 </tr>
+<tr class="odd">
+<td style="text-align: right;">21</td>
+<td style="text-align: left;"><a href="https://www.finn.no/mobility/item/461492193">461492193</a></td>
+<td style="text-align: left;">Electric Lang 9-Seter/Cruise/Oppv.ratt/Navi/Kam/Dab+</td>
+<td style="text-align: left;">Toyota Proace Verso Electric</td>
+<td style="text-align: left;">619 000 kr</td>
+<td style="text-align: left;">698 400 kr</td>
+<td style="text-align: left;">79 400 kr</td>
+<td style="text-align: left;">100 360 kr</td>
+<td style="text-align: left;">-20 960 kr</td>
+<td style="text-align: left;">-3%</td>
+<td style="text-align: left;">Family Plus</td>
+<td style="text-align: right;">2025</td>
+<td style="text-align: left;">300</td>
+<td style="text-align: left;">75 kWh</td>
+<td style="text-align: right;">9</td>
+<td style="text-align: left;">Ukjent</td>
+</tr>
 <tr class="even">
+<td style="text-align: right;">22</td>
+<td style="text-align: left;"><a href="https://www.finn.no/mobility/item/460486066">460486066</a></td>
+<td style="text-align: left;">75kWh L2 Elegance | 6 seter | Skinn</td>
+<td style="text-align: left;">Opel Zafira-e Life</td>
+<td style="text-align: left;">357 000 kr</td>
+<td style="text-align: left;">741 226 kr</td>
+<td style="text-align: left;">384 226 kr</td>
+<td style="text-align: left;">409 149 kr</td>
+<td style="text-align: left;">-24 923 kr</td>
+<td style="text-align: left;">-3%</td>
+<td style="text-align: left;">GS L2 75 kWh</td>
+<td style="text-align: right;">2022</td>
+<td style="text-align: left;">30 000</td>
+<td style="text-align: left;">75 kWh</td>
 <td style="text-align: right;">6</td>
+<td style="text-align: left;">Akershus</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">23</td>
 <td style="text-align: left;"><a href="https://www.finn.no/mobility/item/463485562">463485562</a></td>
 <td style="text-align: left;">340km 75kWt L3 Plus 9-seter/Ryggekamera/Navigasjon/ACC</td>
 <td style="text-align: left;">Citroen ë-SpaceTourer</td>
@@ -1458,6 +2396,168 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <td style="text-align: left;">75 kWh</td>
 <td style="text-align: right;">9</td>
 <td style="text-align: left;">Oslo</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">24</td>
+<td style="text-align: left;"><a href="https://www.finn.no/mobility/item/460911550">460911550</a></td>
+<td style="text-align: left;">136 hk | L2 | 9 seter | 30,5 mil WLP | H-feste |</td>
+<td style="text-align: left;">Peugeot e-Traveller</td>
+<td style="text-align: left;">379 000 kr</td>
+<td style="text-align: left;">659 775 kr</td>
+<td style="text-align: left;">280 775 kr</td>
+<td style="text-align: left;">319 214 kr</td>
+<td style="text-align: left;">-38 439 kr</td>
+<td style="text-align: left;">-6%</td>
+<td style="text-align: left;">Business L2 75 kWh</td>
+<td style="text-align: right;">2021</td>
+<td style="text-align: left;">61 000</td>
+<td style="text-align: left;">75 kWh</td>
+<td style="text-align: right;">9</td>
+<td style="text-align: left;">Ukjent</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">25</td>
+<td style="text-align: left;"><a href="https://www.finn.no/mobility/item/450759876">450759876</a></td>
+<td style="text-align: left;">NORSK GS L3 75KWH 8 SETER ACC CARPLAY MYOPEL APP KAMERA</td>
+<td style="text-align: left;">Opel Zafira-e Life</td>
+<td style="text-align: left;">599 000 kr</td>
+<td style="text-align: left;">749 900 kr</td>
+<td style="text-align: left;">150 900 kr</td>
+<td style="text-align: left;">192 233 kr</td>
+<td style="text-align: left;">-41 333 kr</td>
+<td style="text-align: left;">-6%</td>
+<td style="text-align: left;">GS L3 75 kWh</td>
+<td style="text-align: right;">2025</td>
+<td style="text-align: left;">5 350</td>
+<td style="text-align: left;">75 kWh</td>
+<td style="text-align: right;">8</td>
+<td style="text-align: left;">Ukjent</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">26</td>
+<td style="text-align: left;"><a href="https://www.finn.no/mobility/item/437148373">437148373</a></td>
+<td style="text-align: left;">Electric Lang Executive Family</td>
+<td style="text-align: left;">Toyota Proace Verso Electric</td>
+<td style="text-align: left;">659 000 kr</td>
+<td style="text-align: left;">698 400 kr</td>
+<td style="text-align: left;">39 400 kr</td>
+<td style="text-align: left;">86 468 kr</td>
+<td style="text-align: left;">-47 068 kr</td>
+<td style="text-align: left;">-7%</td>
+<td style="text-align: left;">Family Plus</td>
+<td style="text-align: right;">2024</td>
+<td style="text-align: left;">20 000</td>
+<td style="text-align: left;">75 kWh</td>
+<td style="text-align: right;">8</td>
+<td style="text-align: left;">Ukjent</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">27</td>
+<td style="text-align: left;"><a href="https://www.finn.no/mobility/item/462910944">462910944</a></td>
+<td style="text-align: left;">75 kWh Aut 8 SETER 2 El.Skyved/R.kam Skinn Pano Masasje</td>
+<td style="text-align: left;">Peugeot e-Traveller</td>
+<td style="text-align: left;">399 532 kr</td>
+<td style="text-align: left;">683 600 kr</td>
+<td style="text-align: left;">284 068 kr</td>
+<td style="text-align: left;">332 169 kr</td>
+<td style="text-align: left;">-48 101 kr</td>
+<td style="text-align: left;">-7%</td>
+<td style="text-align: left;">Business L2 + common high-spec options</td>
+<td style="text-align: right;">2021</td>
+<td style="text-align: left;">69 575</td>
+<td style="text-align: left;">75 kWh</td>
+<td style="text-align: right;">8</td>
+<td style="text-align: left;">Oslo</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">28</td>
+<td style="text-align: left;"><a href="https://www.finn.no/mobility/item/459060409">459060409</a></td>
+<td style="text-align: left;">Elegance L3 50kWh 136hk</td>
+<td style="text-align: left;">Opel Zafira-e Life</td>
+<td style="text-align: left;">319 532 kr</td>
+<td style="text-align: left;">749 900 kr</td>
+<td style="text-align: left;">430 368 kr</td>
+<td style="text-align: left;">487 807 kr</td>
+<td style="text-align: left;">-57 439 kr</td>
+<td style="text-align: left;">-8%</td>
+<td style="text-align: left;">GS L3 75 kWh</td>
+<td style="text-align: right;">2021</td>
+<td style="text-align: left;">56 660</td>
+<td style="text-align: left;">50 kWh</td>
+<td style="text-align: right;">8</td>
+<td style="text-align: left;">Agder</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">29</td>
+<td style="text-align: left;"><a href="https://www.finn.no/mobility/item/460970224">460970224</a></td>
+<td style="text-align: left;">Elegance L2 75kWh 136hk</td>
+<td style="text-align: left;">Opel Zafira-e Life</td>
+<td style="text-align: left;">399 000 kr</td>
+<td style="text-align: left;">734 775 kr</td>
+<td style="text-align: left;">335 775 kr</td>
+<td style="text-align: left;">395 013 kr</td>
+<td style="text-align: left;">-59 238 kr</td>
+<td style="text-align: left;">-8%</td>
+<td style="text-align: left;">GS L2 75 kWh</td>
+<td style="text-align: right;">2022</td>
+<td style="text-align: left;">44 800</td>
+<td style="text-align: left;">75 kWh</td>
+<td style="text-align: right;">8</td>
+<td style="text-align: left;">Møre og Romsdal/Vestland</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">30</td>
+<td style="text-align: left;"><a href="https://www.finn.no/mobility/item/426629986">426629986</a></td>
+<td style="text-align: left;">75 kWh Aut 8 SETER 2 El.Skyved/R.kam Skinn Pano Masasje</td>
+<td style="text-align: left;">Peugeot e-Traveller</td>
+<td style="text-align: left;">429 918 kr</td>
+<td style="text-align: left;">698 475 kr</td>
+<td style="text-align: left;">268 557 kr</td>
+<td style="text-align: left;">356 486 kr</td>
+<td style="text-align: left;">-87 929 kr</td>
+<td style="text-align: left;">-13%</td>
+<td style="text-align: left;">Business L2 + common high-spec options</td>
+<td style="text-align: right;">2021</td>
+<td style="text-align: left;">38 778</td>
+<td style="text-align: left;">75 kWh</td>
+<td style="text-align: right;">8</td>
+<td style="text-align: left;">Oslo</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">31</td>
+<td style="text-align: left;"><a href="https://www.finn.no/mobility/item/460244271">460244271</a></td>
+<td style="text-align: left;">L3 Executive 177hk 9-SETER/EL-SKYVEDØRER/ACC/KROK</td>
+<td style="text-align: left;">Toyota Proace Verso Electric</td>
+<td style="text-align: left;">639 990 kr</td>
+<td style="text-align: left;">698 400 kr</td>
+<td style="text-align: left;">58 410 kr</td>
+<td style="text-align: left;">148 740 kr</td>
+<td style="text-align: left;">-90 330 kr</td>
+<td style="text-align: left;">-13%</td>
+<td style="text-align: left;">Family Plus</td>
+<td style="text-align: right;">2023</td>
+<td style="text-align: left;">58 156</td>
+<td style="text-align: left;">75 kWh</td>
+<td style="text-align: right;">9</td>
+<td style="text-align: left;">Ukjent</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">32</td>
+<td style="text-align: left;"><a href="https://www.finn.no/mobility/item/459405352">459405352</a></td>
+<td style="text-align: left;">Electric Lang Executive Shuttle</td>
+<td style="text-align: left;">Toyota Proace Verso Electric</td>
+<td style="text-align: left;">599 900 kr</td>
+<td style="text-align: left;">698 400 kr</td>
+<td style="text-align: left;">98 500 kr</td>
+<td style="text-align: left;">191 592 kr</td>
+<td style="text-align: left;">-93 092 kr</td>
+<td style="text-align: left;">-13%</td>
+<td style="text-align: left;">Family Plus</td>
+<td style="text-align: right;">2023</td>
+<td style="text-align: left;">10 000</td>
+<td style="text-align: left;">75 kWh</td>
+<td style="text-align: right;">9</td>
+<td style="text-align: left;">Ukjent</td>
 </tr>
 </tbody>
 </table>
