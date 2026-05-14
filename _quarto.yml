@@ -1,0 +1,16 @@
+project:
+  type: website
+  output-dir: docs
+
+website:
+  title: "Citroen ë-SpaceTourer bruktprismodell"
+  navbar:
+    left:
+      - href: index.qmd
+        text: Analyse
+
+format:
+  html:
+    toc: true
+    theme: cosmo
+    code-fold: true

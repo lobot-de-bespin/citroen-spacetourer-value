@@ -1,0 +1,234 @@
+---
+title: "Citroen ë-SpaceTourer bruktprismodell"
+author: "Lobot"
+date: today
+params:
+  focus_url: "https://www.finn.no/441656103"
+execute:
+  warning: false
+  message: false
+format:
+  html:
+    toc: true
+    theme: cosmo
+    code-fold: true
+---
+
+```{r}
+library(tidyverse)
+library(broom)
+library(knitr)
+library(scales)
+source("R/model_spacetourer.R")
+
+money <- label_number(big.mark = " ", suffix = " kr", accuracy = 1)
+pct <- label_percent(accuracy = 1)
+focus_id <- stringr::str_extract(params$focus_url, "[0-9]+$")
+```
+
+```{r}
+listings <- readr::read_csv("data/processed/spacetourer_listings.csv", show_col_types = FALSE)
+relevant <- listings |> filter(relevant)
+model_data <- prepare_model_data(listings)
+comparisons <- compare_models(model_data)
+selected_model <- comparisons |>
+  arrange(loocv_mae, glance_AIC) |>
+  slice(1) |>
+  pull(model)
+fit <- fit_candidate_models(model_data)[[selected_model]]
+modelled <- augment_model(fit, model_data)
+metrics <- model_metrics(modelled, fit)
+ranked <- modelled |> filter(relevant) |> arrange(residual)
+readr::write_csv(ranked, "data/processed/spacetourer_ranked_relevant.csv")
+```
+
+## Kortversjon
+
+Markedet er tynt: analysen fant `r nrow(relevant)` relevante Citroen ë-SpaceTourer-annonser på FINN i dag. Derfor er modellen først og fremst et screeningverktøy, ikke en presis verdsettelsesmotor. Jeg har brukt en enkel log-prismodell med alder, kilometerstand og eventuelt 75 kWh-batteri, valgt etter leave-one-out-feil.
+
+Negativ residual betyr at annonsert pris er lavere enn modellen forventer. De mest interessante annonsene ligger derfor øverst i residualtabellen.
+
+## Modellfakta som styrer variablene
+
+ë-SpaceTourer er en elektrisk flerbruksbil/persontransportør på Stellantis-plattformen. Den finnes i flere lengder, blant annet M/L2 og XL/L3, med opptil 8-9 seter. Bruktmarkedet på FINN akkurat nå domineres av XL/L3 og forhjulsdrift. Batteri er en viktig variabel: 50 kWh-bilene har lavere WLTP-rekkevidde enn 75 kWh-bilene, mens nyere 75 kWh-biler typisk prises høyere.
+
+Relevante modellvariabler i dette datagrunnlaget:
+
+- `model_year` / alder: fanger modellår, facelift/nybilnærhet og garanti.
+- `km`: bruktgrad, modellert som `log1p(km)`.
+- `battery_kwh` / `battery_75`: skiller særlig 50 kWh fra 75 kWh.
+- `seats`: 6, 8 eller 9 seter; beholdes i rapporten, men ikke i hovedmodellen fordi n er for liten.
+- `length_variant`: M/L2 vs XL/L3; alle relevante biler her er parsable som XL/L3, så variabelen kan ikke forklare prisforskjeller i dagens datasett.
+- `county`: brukes i markedskartet, ikke som prisvariabel.
+
+## Datagrunnlag
+
+```{r}
+relevant |>
+  transmute(
+    FINN = sprintf("<a href='%s'>%s</a>", url, url_id),
+    pris = money(price),
+    modellår = model_year,
+    km = comma(km, big.mark = " "),
+    batteri = if_else(is.na(battery_kwh), NA_character_, paste0(battery_kwh, " kWh")),
+    WLTP = if_else(is.na(range_wltp_km), NA_character_, paste0(range_wltp_km, " km")),
+    seter = seats,
+    lengde = length_variant,
+    fylke = county
+  ) |>
+  kable(escape = FALSE)
+```
+
+```{r}
+relevant |>
+  count(model_year, battery_kwh, seats, length_variant, county, sort = TRUE) |>
+  kable()
+```
+
+## Markedskart
+
+```{r}
+ggplot(relevant, aes(km, price, color = county)) +
+  geom_point(aes(size = battery_kwh), alpha = 0.85) +
+  geom_text(aes(label = url_id), nudge_y = 17000, size = 3, show.legend = FALSE) +
+  scale_x_continuous(labels = label_number(big.mark = " ", suffix = " km")) +
+  scale_y_continuous(labels = money) +
+  scale_size_continuous(name = "Batteri kWh", range = c(2.5, 5), breaks = c(50, 75)) +
+  labs(x = "Kilometerstand", y = "Pris", color = "Fylke") +
+  theme_minimal()
+```
+
+## Modellvalg
+
+```{r}
+comparisons |>
+  transmute(
+    modell = model,
+    `R2` = round(glance_r.squared, 3),
+    `adj. R2` = round(glance_adj.r.squared, 3),
+    AIC = round(glance_AIC, 1),
+    `LOOCV MAE` = money(loocv_mae),
+    `LOOCV RMSE` = money(loocv_rmse),
+    `LOOCV feilede folds` = loocv_n_failed
+  ) |>
+  kable()
+```
+
+Valgt modell:
+
+```{r}
+broom::tidy(fit) |>
+  mutate(
+    estimate = round(estimate, 4),
+    std.error = round(std.error, 4),
+    statistic = round(statistic, 2),
+    p.value = signif(p.value, 3)
+  ) |>
+  kable()
+```
+
+```{r}
+bind_cols(metrics, comparisons |> filter(model == selected_model)) |>
+  select(n, r_squared, adj_r_squared, rmse, mae, median_abs_error, mean_abs_pct_error, max_abs_error, loocv_mae, loocv_rmse) |>
+  mutate(across(where(is.numeric), ~ round(.x, 3))) |>
+  pivot_longer(everything(), names_to = "metric", values_to = "value") |>
+  kable()
+```
+
+## Diagnostikk
+
+```{r}
+ggplot(modelled, aes(predicted, price)) +
+  geom_point(aes(color = county), size = 3, alpha = 0.85) +
+  geom_abline(slope = 1, intercept = 0, linetype = "dashed", color = "#D55E00") +
+  geom_text(aes(label = url_id), nudge_y = 12000, size = 3, show.legend = FALSE) +
+  scale_x_continuous(labels = money) +
+  scale_y_continuous(labels = money) +
+  labs(x = "Modellert pris", y = "Annonsert pris", color = "Fylke") +
+  theme_minimal()
+```
+
+```{r}
+ggplot(modelled, aes(predicted, residual)) +
+  geom_hline(yintercept = 0, linetype = "dashed", color = "#D55E00") +
+  geom_point(aes(color = county), size = 3, alpha = 0.85) +
+  geom_text(aes(label = url_id), nudge_y = 12000, size = 3, show.legend = FALSE) +
+  scale_x_continuous(labels = money) +
+  scale_y_continuous(labels = money) +
+  labs(x = "Modellert pris", y = "Residual: annonsert minus modellert", color = "Fylke") +
+  theme_minimal()
+```
+
+```{r}
+ggplot(modelled, aes(sample = residual)) +
+  stat_qq(alpha = 0.75) +
+  stat_qq_line(color = "#D55E00") +
+  scale_y_continuous(labels = money) +
+  labs(x = "Teoretiske kvantiler", y = "Residual") +
+  theme_minimal()
+```
+
+```{r}
+modelled |>
+  arrange(desc(cooks_d)) |>
+  transmute(
+    FINN = sprintf("<a href='%s'>%s</a>", url, url_id),
+    pris = money(price),
+    predikert = money(predicted),
+    residual = money(residual),
+    `student-residual` = round(student_residual, 2),
+    `Cook's D` = round(cooks_d, 3),
+    leverage = round(leverage, 3)
+  ) |>
+  kable(escape = FALSE)
+```
+
+## Mest underpriset
+
+```{r}
+ranked |>
+  transmute(
+    rang = row_number(),
+    FINN = sprintf("<a href='%s'>%s</a>", url, url_id),
+    annonse = coalesce(subtitle, description, title),
+    pris = money(price),
+    predikert = money(predicted),
+    residual = money(residual),
+    `relativ residual` = pct(pct_residual),
+    modellår = model_year,
+    km = comma(km, big.mark = " "),
+    batteri = paste0(battery_kwh_model, " kWh"),
+    seter = seats,
+    fylke = county
+  ) |>
+  kable(escape = FALSE)
+```
+
+## Valgt annonse
+
+```{r}
+focus <- modelled |> filter(url_id == focus_id)
+if (nrow(focus) == 0) {
+  cat("Annonsen finnes ikke i det gjeldende datasettet.")
+} else {
+  focus |>
+    transmute(
+      FINN = sprintf("<a href='%s'>%s</a>", url, url_id),
+      annonse = coalesce(subtitle, description, title),
+      pris = money(price),
+      predikert = money(predicted),
+      residual = money(residual),
+      `relativ residual` = pct(pct_residual),
+      modellår = model_year,
+      km = comma(km, big.mark = " "),
+      batteri = paste0(battery_kwh_model, " kWh"),
+      seter = seats,
+      fylke = county
+    ) |>
+    kable(escape = FALSE)
+}
+```
+
+## Begrensninger
+
+Dette er et lite datasett med høy leverage i enkeltobservasjoner. Ingen spline er brukt, fordi seks relevante annonser ikke gir nok frihetsgrader til å estimere en kurve troverdig. Når flere annonser kommer inn, bør neste modellversjon teste splines for kilometerstand/alder og eventuelt trekke inn sammenlignbare Stellantis-søskenmodeller som Opel Zafira-e Life, Peugeot e-Traveller og Toyota Proace Verso Electric som et eksplisitt komparatormarked.
